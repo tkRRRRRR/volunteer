@@ -114,6 +114,18 @@ function Wait-TcpPort {
     throw "$Name did not start on port $Port within $TimeoutSeconds seconds."
 }
 
+function Assert-TcpPort {
+    param(
+        [int]$Port,
+        [string]$Name,
+        [string]$StartHint
+    )
+    if (-not (Test-TcpPort -Port $Port)) {
+        throw "$Name is not running on port $Port. Start it with $StartHint."
+    }
+    Write-Host "[OK] $Name is listening on port $Port"
+}
+
 function Wait-HttpOk {
     param(
         [string]$Url,

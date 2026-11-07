@@ -35,10 +35,14 @@ Write-Host "[OK] $mysqlVersion"
 Write-Host "[OK] $redisVersion"
 
 Write-Section 'Ports'
-Wait-TcpPort -Port $mysqlPort -Name 'MySQL' -TimeoutSeconds 5
-Wait-TcpPort -Port $redisPort -Name 'Redis' -TimeoutSeconds 5
-Wait-TcpPort -Port $backendPort -Name 'Backend' -TimeoutSeconds 30
-Wait-TcpPort -Port $frontendPort -Name 'Frontend' -TimeoutSeconds 30
+Assert-TcpPort -Port $mysqlPort -Name 'MySQL' `
+    -StartHint '.\start-databases.ps1 or .\start-all.ps1'
+Assert-TcpPort -Port $redisPort -Name 'Redis' `
+    -StartHint '.\start-databases.ps1 or .\start-all.ps1'
+Assert-TcpPort -Port $backendPort -Name 'Backend' `
+    -StartHint '.\start-backend.ps1 -Background or .\start-all.ps1'
+Assert-TcpPort -Port $frontendPort -Name 'Frontend' `
+    -StartHint '.\start-frontend.ps1 -Background or .\start-all.ps1'
 
 Write-Section 'Database'
 $oldMysqlPassword = $env:MYSQL_PWD
