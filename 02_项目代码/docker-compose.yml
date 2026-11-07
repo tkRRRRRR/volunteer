@@ -1,0 +1,34 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: volunteer-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - volunteer_mysql_data:/var/lib/mysql
+      - ./database/schema/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./database/seed/02_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot123456"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: volunteer-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - volunteer_redis_data:/data
+    command: redis-server --appendonly yes
+
+volumes:
+  volunteer_mysql_data:
+  volunteer_redis_data:

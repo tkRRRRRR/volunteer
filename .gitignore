@@ -1,0 +1,32 @@
+# IDE and OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Java
+target/
+*.class
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+application-local.yml
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+.tmp/
+.tools/
+~$*.docx
+
+# Runtime uploads
+uploads/
