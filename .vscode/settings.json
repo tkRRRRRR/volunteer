@@ -1,0 +1,34 @@
+{
+  "files.encoding": "utf8",
+  "files.autoGuessEncoding": true,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  "terminal.integrated.env.windows": {
+    "JAVA_HOME": "${workspaceFolder}/dev-environment/runtime/jdk-17",
+    "PATH": "${workspaceFolder}/dev-environment/runtime/jdk-17/bin;${workspaceFolder}/dev-environment/runtime/maven-3.9.9/bin;${workspaceFolder}/dev-environment/runtime/node-20.18.1;${env:PATH}"
+  },
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.import.maven.enabled": true,
+  "java.debug.settings.console": "internalConsole",
+  "java.debug.settings.forceBuildBeforeLaunch": true,
+  "files.watcherExclude": {
+    "**/dev-environment/runtime/**": true,
+    "**/dev-environment/downloads/**": true,
+    "**/dev-environment/data/**": true,
+    "**/dev-environment/cache/**": true,
+    "**/dev-environment/logs/**": true,
+    "**/02_项目代码/volunteer-backend/target/**": true,
+    "**/02_项目代码/volunteer-frontend/node_modules/**": true,
+    "**/02_项目代码/volunteer-frontend/dist/**": true
+  },
+  "search.exclude": {
+    "**/dev-environment/runtime/**": true,
+    "**/dev-environment/downloads/**": true,
+    "**/dev-environment/data/**": true,
+    "**/dev-environment/cache/**": true,
+    "**/dev-environment/logs/**": true,
+    "**/02_项目代码/volunteer-backend/target/**": true,
+    "**/02_项目代码/volunteer-frontend/node_modules/**": true,
+    "**/02_项目代码/volunteer-frontend/dist/**": true
+  }
+}

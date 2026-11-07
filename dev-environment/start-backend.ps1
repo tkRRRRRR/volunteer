@@ -11,7 +11,8 @@ $mavenHome = Join-Path $RuntimeRoot $manifest.Maven.TargetDirectory
 $backendPort = [int](Get-ConfigValue 'BACKEND_PORT' '8080')
 $mysqlPort = Get-ConfigValue 'MYSQL_PORT' '3307'
 $redisPort = Get-ConfigValue 'REDIS_PORT' '6380'
-$mysqlPassword = Get-ConfigValue 'MYSQL_ROOT_PASSWORD' 'root123456'
+$mysqlPassword = Get-ConfigValue 'DB_PASSWORD' (Get-ConfigValue 'MYSQL_ROOT_PASSWORD' 'root123456')
+$redisHost = Get-ConfigValue 'REDIS_HOST' '127.0.0.1'
 $jwtSecret = Get-ConfigValue 'JWT_SECRET' 'dev-only-change-this-secret-before-production-2026'
 
 Ensure-File -Path (Join-Path $jdkHome 'bin\java.exe') `
@@ -37,7 +38,7 @@ $env:DB_URL = "jdbc:mysql://127.0.0.1:$mysqlPort/gaokao_volunteer?useUnicode=tru
 $env:DB_USERNAME = 'root'
 $env:DB_PASSWORD = $mysqlPassword
 $env:JWT_SECRET = $jwtSecret
-$env:REDIS_HOST = '127.0.0.1'
+$env:REDIS_HOST = $redisHost
 $env:REDIS_PORT = $redisPort
 
 $maven = Join-Path $mavenHome 'bin\mvn.cmd'

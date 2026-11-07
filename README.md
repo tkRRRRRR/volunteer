@@ -93,3 +93,9 @@ Set-Location .\dev-environment
 ```powershell
 git config commit.template .gitmessage-zh
 ```
+
+## VS Code
+
+项目已经包含共享的 `.vscode` 配置，推荐插件、集成终端便携环境、一键启动任务和后端调试配置均已准备好。
+
+完整说明见 [VSCODE运行指南.md](VSCODE运行指南.md)。

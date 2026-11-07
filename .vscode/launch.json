@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "后端：调试 Spring Boot",
+      "request": "launch",
+      "mainClass": "com.example.volunteer.VolunteerApplication",
+      "projectName": "volunteer-backend",
+      "cwd": "${workspaceFolder}/02_项目代码/volunteer-backend",
+      "console": "internalConsole",
+      "envFile": "${workspaceFolder}/dev-environment/.env",
+      "vmArgs": [
+        "-Dfile.encoding=UTF-8"
+      ],
+      "preLaunchTask": "数据库：启动"
+    }
+  ]
+}
