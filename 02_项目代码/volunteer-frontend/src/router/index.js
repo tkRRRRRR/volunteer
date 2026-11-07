@@ -41,6 +41,7 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const auth = useAuthStore()
+  // 未登录用户只能访问公开页面，登录后根据路由角色限制管理入口。
   if (!to.meta.public && !auth.token) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }

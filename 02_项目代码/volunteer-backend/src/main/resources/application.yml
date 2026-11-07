@@ -1,3 +1,4 @@
+# 便携环境默认配置。生产部署时应通过环境变量覆盖数据库密码和 JWT 密钥。
 server:
   port: ${SERVER_PORT:8080}
 
@@ -13,6 +14,7 @@ spring:
     time-zone: Asia/Shanghai
     date-format: yyyy-MM-dd HH:mm:ss
   cache:
+    # 单独运行后端时使用本地缓存；启用 redis 配置后再切换到 Redis。
     type: simple
 
 mybatis-plus:

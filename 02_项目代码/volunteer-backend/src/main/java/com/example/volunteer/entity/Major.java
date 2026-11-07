@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/** 院校开设的专业信息，包含专业门类和选科要求。 */
 @Data
 @TableName("major")
 public class Major {

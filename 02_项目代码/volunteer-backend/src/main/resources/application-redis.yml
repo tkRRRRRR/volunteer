@@ -1,3 +1,4 @@
+# Redis 缓存配置，通过 --spring.profiles.active=redis 启用。
 spring:
   cache:
     type: redis

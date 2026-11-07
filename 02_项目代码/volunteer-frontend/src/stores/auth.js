@@ -4,6 +4,7 @@ import { login as loginApi, register as registerApi, updateProfile as updateProf
 const TOKEN_KEY = 'volunteer_token'
 const USER_KEY = 'volunteer_user'
 
+// 本地存储只保存前端会话信息；密码哈希和密钥始终不会返回浏览器。
 function readUser() {
   try {
     return JSON.parse(localStorage.getItem(USER_KEY) || 'null')
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     persist(payload) {
+      // 登录、注册和刷新资料后统一持久化令牌与用户视图。
       this.token = payload.token
       this.user = payload.user
       localStorage.setItem(TOKEN_KEY, payload.token)

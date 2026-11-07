@@ -32,7 +32,9 @@ function Get-RuntimeSpec {
 }
 
 function Install-RuntimeFromArchive {
-    param(
+# 首次安装脚本：检查固定版本运行时、初始化数据库并构建项目依赖。
+# 所有文件均位于当前项目目录内，不修改系统级环境变量。
+param(
         [string]$Key,
         [hashtable]$Spec
     )

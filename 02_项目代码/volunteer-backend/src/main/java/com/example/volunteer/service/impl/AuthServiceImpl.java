@@ -17,6 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+/**
+ * 处理学生注册、账号登录、个人档案查询与更新。
+ * 密码只保存 BCrypt 哈希，登录成功后签发 JWT。
+ */
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -45,6 +49,7 @@ public class AuthServiceImpl implements AuthService {
         user.setUsername(username);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setNickname(request.getNickname().trim());
+        // 自助注册只创建学生账号，管理员账号由初始化数据或后台流程维护。
         user.setRole("STUDENT");
         user.setProvince(request.getProvince());
         user.setExamYear(request.getExamYear());
@@ -62,6 +67,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, request.getUsername().trim())
                 .last("limit 1"));
+        // 用户名不存在和密码错误使用同一提示，避免泄露账号是否存在。
         if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw BusinessException.unauthorized("用户名或密码错误");
         }
@@ -89,6 +95,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private AuthVO buildAuth(User user) {
+        // 返回令牌和脱敏后的用户视图，不向前端暴露密码哈希。
         String token = jwtUtil.createToken(user.getId(), user.getUsername(), user.getRole());
         return new AuthVO(token, UserVO.from(user));
     }

@@ -1,4 +1,5 @@
-﻿param(
+﻿# 一键启动便携 MySQL、Redis、后端和前端，并在最后执行完整验证。
+param(
     [switch]$NoBrowser,
     [switch]$SkipVerification
 )

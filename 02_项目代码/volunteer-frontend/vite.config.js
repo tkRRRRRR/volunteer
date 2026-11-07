@@ -7,6 +7,7 @@ export default defineConfig(() => ({
     port: 5173,
     proxy: {
       '/api': {
+        // 开发环境通过 Vite 代理请求后端，避免浏览器直接跨域。
         target: process.env.VITE_BACKEND_URL || 'http://127.0.0.1:8080',
         changeOrigin: true
       }

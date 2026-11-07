@@ -8,6 +8,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * 将业务异常、参数校验异常和未知异常统一转换为 ApiResponse。
+ */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {

@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/** 学生收藏的院校或具体专业，收藏数据严格按用户编号隔离。 */
 @Data
 @TableName("favorite")
 public class Favorite {

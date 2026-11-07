@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/** 院校基础信息，名称、地区、层次和标签用于查询筛选。 */
 @Data
 @TableName("university")
 public class University {

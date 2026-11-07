@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/** 系统账号及其高考档案，密码字段只保存 BCrypt 哈希。 */
 @Data
 @TableName("sys_user")
 public class User {

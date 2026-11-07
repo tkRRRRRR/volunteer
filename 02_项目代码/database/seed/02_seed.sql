@@ -1,3 +1,5 @@
+-- 本文件只包含虚构演示数据，用于验证系统流程。
+-- 院校名称、分数和位次均不代表任何真实学校的招生结果。
 USE gaokao_volunteer;
 
 SET NAMES utf8mb4;

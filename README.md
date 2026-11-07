@@ -83,3 +83,13 @@ Set-Location .\dev-environment
 完整配置教程见 `dev-environment/README.md`。环境包含固定版本的 JDK、Maven、Node.js、MySQL、Redis、项目专用 Maven 依赖缓存、数据库数据和启动验证脚本。
 
 大型运行时、数据库数据、日志和缓存不进入 Git 历史；复制整个项目文件夹时可一并保留，从 Git 克隆后再运行 `setup-environment.ps1` 自动重建。
+
+## 协作规范
+
+项目代码使用必要的中文注释，重点解释业务流程、算法依据、安全判断和非直观实现。Git 提交信息统一使用中文，推荐格式为“类型：中文简述”。
+
+完整要求见 `CONTRIBUTING.md`。仓库提供 `.gitmessage-zh` 提交模板，可通过以下命令启用：
+
+```powershell
+git config commit.template .gitmessage-zh
+```

@@ -22,6 +22,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * 管理当前学生的院校专业收藏，并校验专业归属和收藏所有权。
+ */
 @Service
 public class FavoriteServiceImpl implements FavoriteService {
 
@@ -81,6 +84,7 @@ public class FavoriteServiceImpl implements FavoriteService {
         Major major = null;
         if (request.getMajorId() != null) {
             major = majorMapper.selectById(request.getMajorId());
+            // 防止把其他院校的专业挂到当前院校下。
             if (major == null || !request.getUniversityId().equals(major.getUniversityId())) {
                 throw BusinessException.badRequest("专业与院校不匹配");
             }
@@ -89,6 +93,7 @@ public class FavoriteServiceImpl implements FavoriteService {
         LambdaQueryWrapper<Favorite> duplicateQuery = new LambdaQueryWrapper<Favorite>()
                 .eq(Favorite::getUserId, userId)
                 .eq(Favorite::getUniversityId, request.getUniversityId());
+        // MySQL 唯一索引允许 NULL 重复，因此应用层分别判断院校收藏和具体专业收藏。
         if (request.getMajorId() == null) {
             duplicateQuery.isNull(Favorite::getMajorId);
         } else {
@@ -114,6 +119,7 @@ public class FavoriteServiceImpl implements FavoriteService {
         if (favorite == null) {
             throw BusinessException.notFound("收藏记录不存在");
         }
+        // 收藏按用户隔离，即使知道记录编号也不能删除他人的数据。
         if (!userId.equals(favorite.getUserId())) {
             throw BusinessException.forbidden("无权删除该收藏");
         }

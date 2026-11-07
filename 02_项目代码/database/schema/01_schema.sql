@@ -1,3 +1,5 @@
+-- 高考志愿填报辅助系统数据库结构。
+-- 该脚本会删除并重建同名业务表，仅用于开发、演示和论文测试环境。
 CREATE DATABASE IF NOT EXISTS gaokao_volunteer
   DEFAULT CHARACTER SET utf8mb4
   DEFAULT COLLATE utf8mb4_unicode_ci;
@@ -78,6 +80,7 @@ CREATE TABLE admission_record (
   CONSTRAINT fk_admission_major FOREIGN KEY (major_id) REFERENCES major (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='历年录取记录';
 
+-- 收藏既可以指向整所院校，也可以指向院校下的具体专业。
 CREATE TABLE favorite (
   id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键',
   user_id BIGINT NOT NULL COMMENT '用户 ID',

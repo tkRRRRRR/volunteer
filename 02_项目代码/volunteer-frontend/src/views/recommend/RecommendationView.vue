@@ -12,6 +12,7 @@ const results = ref([])
 const chartRef = ref()
 let chart
 
+// 首次进入页面时使用当前账号档案，减少重复填写。
 const form = reactive({
   province: auth.user?.province || '山西',
   examYear: auth.user?.examYear || 2026,
@@ -34,6 +35,7 @@ const renderChart = async () => {
   await nextTick()
   if (!chartRef.value) return
   chart ||= echarts.init(chartRef.value)
+  // 按四类匹配等级统计数量，直观展示本次筛选结果分布。
   const counts = ['保底', '稳妥', '冲刺', '不建议'].map((level) => ({
     name: level,
     value: results.value.filter((item) => item.matchLevel === level).length
@@ -80,6 +82,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  // 离开页面时释放图表和窗口监听，避免重复初始化与内存泄漏。
   window.removeEventListener('resize', resize)
   chart?.dispose()
 })

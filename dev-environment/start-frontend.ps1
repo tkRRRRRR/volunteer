@@ -1,4 +1,5 @@
-﻿param(
+﻿# 使用便携 Node.js 启动 Vue 开发服务器，并设置开发代理的后端地址。
+param(
     [switch]$Background
 )
 

@@ -15,6 +15,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Arrays;
 
+/**
+ * 解析 Bearer Token，并将当前登录用户放入请求线程上下文。
+ * 只有标注了 {@link RequireRole} 的接口才执行登录与角色检查。
+ */
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
@@ -30,6 +34,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        // 先查找方法上的权限要求，没有时再使用控制器类上的配置。
         RequireRole requireRole = handlerMethod.getMethodAnnotation(RequireRole.class);
         if (requireRole == null) {
             requireRole = handlerMethod.getBeanType().getAnnotation(RequireRole.class);
@@ -55,6 +60,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             if (Arrays.stream(requireRole.value()).noneMatch(role::equals)) {
                 throw BusinessException.forbidden("当前账号无权访问该功能");
             }
+            // 将验证后的用户信息放入线程上下文，供后续业务层读取。
             UserContext.set(new LoginUser(userId, username, role));
             return true;
         } catch (BusinessException exception) {
@@ -71,6 +77,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             Object handler,
             Exception exception
     ) {
+        // Tomcat 会复用工作线程，因此无论请求成功还是失败都要清理上下文。
         UserContext.clear();
     }
 }

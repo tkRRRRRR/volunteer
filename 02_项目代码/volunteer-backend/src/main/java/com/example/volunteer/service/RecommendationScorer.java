@@ -2,6 +2,10 @@ package com.example.volunteer.service;
 
 import java.util.Locale;
 
+/**
+ * 将考生位次和分数与历史录取数据进行比较，生成可解释的辅助匹配结果。
+ * 位次权重高于分数，避免不同年份试题难度变化对结果造成过大影响。
+ */
 public final class RecommendationScorer {
 
     private RecommendationScorer() {
@@ -15,12 +19,15 @@ public final class RecommendationScorer {
             throw new IllegalArgumentException("成绩、位次和历史录取数据必须为正数");
         }
 
+        // 相对位次差为正表示考生位次优于历史最低位次，为负表示落后。
         double rankGap = (averageMinRank - userRank) / (double) averageMinRank;
         double scoreGap = (userScore - averageMinScore) / (double) averageMinScore;
         double rankComponent = clamp(50 + rankGap * 100, 0, 100);
         double scoreComponent = clamp(50 + scoreGap * 100, 0, 100);
+        // 位次占 70%，分数占 30%，两项都限制在 0 到 100 分之间。
         int matchScore = (int) Math.round(rankComponent * 0.7 + scoreComponent * 0.3);
 
+        // 等级只是资料整理标签，不代表系统对录取概率作出承诺。
         String matchLevel;
         if (matchScore >= 70) {
             matchLevel = "保底";

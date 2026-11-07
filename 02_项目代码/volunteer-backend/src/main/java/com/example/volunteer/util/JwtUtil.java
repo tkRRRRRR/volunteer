@@ -12,6 +12,10 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+/**
+ * 生成和校验 JWT 登录凭证。
+ * 令牌中包含用户编号、用户名和角色，过期时间由配置项控制。
+ */
 @Component
 public class JwtUtil {
 
@@ -39,6 +43,7 @@ public class JwtUtil {
     }
 
     public Claims parseToken(String token) {
+        // verifyWith 会同时校验签名和令牌有效期，失败时由拦截器统一转换为登录失效。
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()

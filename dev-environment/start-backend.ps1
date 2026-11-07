@@ -1,4 +1,5 @@
-﻿param(
+﻿# 使用便携 JDK 和项目专属 Maven 仓库构建后端，并通过相对 JAR 路径启动。
+param(
     [switch]$Background
 )
 

@@ -17,6 +17,9 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 提供院校公开查询以及管理员端的院校基础信息维护。
+ */
 @Service
 public class UniversityServiceImpl implements UniversityService {
 
@@ -29,6 +32,7 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     public PageResult<UniversityVO> search(UniversityQuery query) {
         LambdaQueryWrapper<University> wrapper = new LambdaQueryWrapper<>();
+        // 关键词同时匹配名称、简介和标签，便于学生用专业方向或院校特点检索。
         if (StringUtils.hasText(query.getKeyword())) {
             String keyword = query.getKeyword().trim();
             wrapper.and(item -> item.like(University::getName, keyword)
@@ -46,6 +50,7 @@ public class UniversityServiceImpl implements UniversityService {
         wrapper.orderByDesc(University::getId);
 
         Page<University> page = universityMapper.selectPage(new Page<>(query.getPage(), query.getSize()), wrapper);
+        // 数据库实体转换为页面视图，避免直接向前端暴露持久层对象。
         List<UniversityVO> records = page.getRecords().stream().map(UniversityVO::from).toList();
         return new PageResult<>(records, page.getTotal(), page.getCurrent(), page.getSize());
     }

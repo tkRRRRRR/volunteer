@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * 历年录取记录。省份、年份、科类和来源共同决定一条数据能否参与推荐计算。
+ */
 @Data
 @TableName("admission_record")
 public class AdmissionRecord {

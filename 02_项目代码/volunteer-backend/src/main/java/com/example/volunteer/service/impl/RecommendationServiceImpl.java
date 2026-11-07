@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +24,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * 读取近三年录取记录，按院校专业聚合后计算匹配分并组织推荐结果。
+ */
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
 
@@ -47,6 +49,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     @Cacheable(value = "recommendations", key = "#request.cacheKey()")
     public List<RecommendationVO> recommend(RecommendationRequest request) {
+        // 统一使用考试年份前三年的数据，避免把不同科类或省份的记录混在一起。
         List<AdmissionRecord> records = admissionRecordMapper.selectList(new LambdaQueryWrapper<AdmissionRecord>()
                 .eq(AdmissionRecord::getProvince, request.getProvince())
                 .eq(AdmissionRecord::getSubjectTrack, request.getSubjectTrack())
@@ -59,6 +62,7 @@ public class RecommendationServiceImpl implements RecommendationService {
             return List.of();
         }
 
+        // 同一院校专业可能有多年的录取记录，先聚合再参与匹配计算。
         Map<GroupKey, List<AdmissionRecord>> grouped = records.stream()
                 .filter(record -> record.getMinScore() != null && record.getMinRank() != null)
                 .collect(Collectors.groupingBy(record -> new GroupKey(record.getUniversityId(), record.getMajorId())));
@@ -90,6 +94,7 @@ public class RecommendationServiceImpl implements RecommendationService {
             }
 
             List<AdmissionRecord> groupRecords = entry.getValue();
+            // 平均分和平均位次用于平滑单年异常波动。
             int averageMinScore = (int) Math.round(groupRecords.stream()
                     .mapToInt(AdmissionRecord::getMinScore)
                     .average()
@@ -135,11 +140,13 @@ public class RecommendationServiceImpl implements RecommendationService {
             ));
         }
 
+        // 匹配分高的结果优先展示，并限制数量以控制页面信息量。
         results.sort(Comparator.comparing(RecommendationVO::matchScore).reversed());
         return results.stream().limit(MAX_RESULTS).toList();
     }
 
     private boolean matchesFilters(University university, Major major, RecommendationRequest request) {
+        // 空筛选项表示不限，只有用户明确选择时才排除不匹配的记录。
         if (StringUtils.hasText(request.getPreferredProvince())
                 && !request.getPreferredProvince().equals(university.getProvince())) {
             return false;

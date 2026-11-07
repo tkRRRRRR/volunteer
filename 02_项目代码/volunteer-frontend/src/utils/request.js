@@ -6,6 +6,7 @@ const service = axios.create({
   timeout: 15000
 })
 
+// 每次请求自动附加本地 JWT，业务页面无需重复处理登录头。
 service.interceptors.request.use((config) => {
   const token = localStorage.getItem('volunteer_token')
   if (token) {
@@ -17,6 +18,7 @@ service.interceptors.request.use((config) => {
 service.interceptors.response.use(
   (response) => {
     const payload = response.data
+    // 后端业务状态统一放在 code 字段，401 时清理失效会话并返回登录页。
     if (payload?.code !== 0) {
       if (payload?.code === 401) {
         localStorage.removeItem('volunteer_token')
@@ -32,6 +34,7 @@ service.interceptors.response.use(
   },
   (error) => {
     const message = error.response?.data?.message || error.message || '网络连接异常'
+    // 兼容后端返回 HTTP 401 或响应体中 code 为 401 的情况。
     if (error.response?.status === 401 || error.response?.data?.code === 401) {
       localStorage.removeItem('volunteer_token')
       localStorage.removeItem('volunteer_user')
