@@ -69,3 +69,17 @@ Thesis/
 - 后端编译成功，推荐算法单元测试全部通过；前端生产构建成功。
 
 项目启动方式、演示账号和 Redis 模式说明见 `02_项目代码/README.md`。
+
+## 便携开发环境
+
+所有开发运行库统一放在 `dev-environment/`。首次配置：
+
+```powershell
+Set-Location .\dev-environment
+.\setup-environment.ps1
+.\start-all.ps1
+```
+
+完整配置教程见 `dev-environment/README.md`。环境包含固定版本的 JDK、Maven、Node.js、MySQL、Redis、项目专用 Maven 依赖缓存、数据库数据和启动验证脚本。
+
+大型运行时、数据库数据、日志和缓存不进入 Git 历史；复制整个项目文件夹时可一并保留，从 Git 克隆后再运行 `setup-environment.ps1` 自动重建。

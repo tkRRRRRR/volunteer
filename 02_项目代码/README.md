@@ -21,7 +21,16 @@ scripts/             辅助脚本
 
 ### 1. 启动 MySQL 和 Redis
 
-安装 Docker Desktop 后，在 `02_项目代码` 目录执行：
+推荐直接使用项目根目录的便携环境，无需全局安装 Java、Node.js、MySQL 或 Redis：
+
+```powershell
+Set-Location ..\dev-environment
+.\start-all.ps1
+```
+
+详细教程见 `dev-environment/README.md`。
+
+如使用 Docker Desktop，也可在 `02_项目代码` 目录执行：
 
 ```powershell
 docker compose up -d
@@ -43,7 +52,7 @@ cd volunteer-backend
 mvn spring-boot:run
 ```
 
-默认数据库账号为 `root`，密码为 `root123456`。可通过环境变量 `DB_USERNAME`、`DB_PASSWORD` 和 `JWT_SECRET` 覆盖。
+便携环境默认数据库端口为 `3307`，账号为 `root`，密码为 `root123456`。可通过环境变量 `DB_URL`、`DB_USERNAME`、`DB_PASSWORD` 和 `JWT_SECRET` 覆盖。
 
 接口文档地址：`http://localhost:8080/swagger-ui.html`
 

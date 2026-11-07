@@ -6,7 +6,7 @@ services:
       MYSQL_ROOT_PASSWORD: root123456
       TZ: Asia/Shanghai
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - volunteer_mysql_data:/var/lib/mysql
       - ./database/schema/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
@@ -24,7 +24,7 @@ services:
     image: redis:7-alpine
     container_name: volunteer-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - volunteer_redis_data:/data
     command: redis-server --appendonly yes

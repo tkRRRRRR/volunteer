@@ -28,5 +28,13 @@ tmp/
 .tools/
 ~$*.docx
 
+# Portable development environment runtime and local data
+dev-environment/runtime/
+dev-environment/downloads/
+dev-environment/data/
+dev-environment/logs/
+dev-environment/cache/
+dev-environment/.env
+
 # Runtime uploads
 uploads/
