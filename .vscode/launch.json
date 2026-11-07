@@ -13,7 +13,7 @@
       "vmArgs": [
         "-Dfile.encoding=UTF-8"
       ],
-      "preLaunchTask": "数据库：启动"
+      "preLaunchTask": "调试：准备环境"
     }
   ]
 }

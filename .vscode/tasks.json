@@ -106,6 +106,19 @@
       }
     },
     {
+      "label": "调试：准备环境",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "项目：停止全部",
+        "数据库：启动"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
       "label": "后端：启动（前台）",
       "type": "process",
       "command": "powershell.exe",

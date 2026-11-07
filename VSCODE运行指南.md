@@ -12,12 +12,14 @@ C:\Users\Administrator\Desktop\Thesis
 
 VS Code 打开项目后，右下角会提示安装推荐插件。也可以打开扩展面板搜索：
 
-- Extension Pack for Java
-- Spring Boot Extension Pack
+- Language Support for Java by Red Hat
+- Debugger for Java
+- Maven for Java
+- Project Manager for Java
 - Vue - Official
 - PowerShell
 
-这些插件用于 Java 代码补全、Spring Boot 支持、Vue 语法高亮和 PowerShell 脚本编辑。一键启动本身不依赖 Spring Boot 插件。
+这些插件用于 Java 代码补全、断点调试、Maven 项目和 Vue 语法高亮。为避免 Java Test 插件的 ASM 依赖冲突，不推荐直接安装 Extension Pack for Java。
 
 ## 2. 首次配置
 
@@ -110,7 +112,7 @@ C:\Users\Administrator\Desktop\Thesis\dev-environment\runtime\jdk-17
 3. 选择“后端：调试 Spring Boot”。
 4. 在 Java 代码中设置断点并按 `F5`。
 
-调试配置会自动执行“数据库：启动”，并从 `dev-environment/.env` 读取数据库、Redis 和 JWT 配置。
+调试配置会先停止后台运行的同项目服务，避免 8080 端口冲突，然后启动数据库，并从 `dev-environment/.env` 读取数据库、Redis 和 JWT 配置。
 
 如果暂时不需要断点，直接使用“项目：一键启动”更简单。
 
@@ -123,6 +125,7 @@ C:\Users\Administrator\Desktop\Thesis\dev-environment\runtime\jdk-17
 | 项目：停止全部 | 关闭全部服务 |
 | 项目：完整验证 | 验证版本、端口和主流程 |
 | 数据库：启动 | 只启动 MySQL 和 Redis |
+| 调试：准备环境 | 停止后台服务并准备调试数据库 |
 | 后端：启动（前台） | 前台运行 Spring Boot，便于查看日志 |
 | 前端：启动（前台） | 前台运行 Vite |
 | 后端：编译并测试 | 使用便携 Maven 环境编译并测试 |
@@ -148,6 +151,23 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ### Java 插件仍要求选择 JDK
 
 执行“Java: Configure Java Runtime”，选择 `dev-environment/runtime/jdk-17`。
+
+### Java 项目导入失败或调试器无法启动
+
+如果 Java 扩展日志出现：
+
+```text
+A bundle is already installed with the name "org.objectweb.asm"
+```
+
+说明 Java Test 插件与 Java 语言服务器的 ASM 依赖重复。请卸载 `Test Runner for Java` 和不再需要的 `Extension Pack for Java`，保留以下扩展：
+
+- `redhat.java`
+- `vscjava.vscode-java-debug`
+- `vscjava.vscode-java-dependency`
+- `vscjava.vscode-maven`
+
+然后执行“Developer: Reload Window”，再运行“后端：调试 Spring Boot”。
 
 ## 9. 可移植性
 
