@@ -106,12 +106,34 @@
       }
     },
     {
-      "label": "调试：准备环境",
+      "label": "调试：准备前后端",
       "dependsOrder": "sequence",
       "dependsOn": [
         "项目：停止全部",
-        "数据库：启动"
+        "数据库：启动",
+        "前端：启动（后台）"
       ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "前端：启动（后台）",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/dev-environment/start-frontend.ps1",
+        "-Background"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",

@@ -59,6 +59,8 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\dev-environment\start-all.ps1
 ```
 
+“项目：一键启动”会同时启动前端。只启动后端并不等于网页已经可以访问。
+
 ## 4. 停止和检查
 
 停止全部服务：
@@ -112,7 +114,7 @@ C:\Users\Administrator\Desktop\Thesis\dev-environment\runtime\jdk-17
 3. 选择“后端：调试 Spring Boot”。
 4. 在 Java 代码中设置断点并按 `F5`。
 
-调试配置会先停止后台运行的同项目服务，避免 8080 端口冲突，然后启动数据库，并从 `dev-environment/.env` 读取数据库、Redis 和 JWT 配置。
+调试配置会依次停止旧服务、启动 MySQL 和 Redis、启动后台前端，然后使用调试模式启动 Spring Boot。`F5` 完成后，后端和网页应同时可用。
 
 如果暂时不需要断点，直接使用“项目：一键启动”更简单。
 
@@ -125,7 +127,8 @@ C:\Users\Administrator\Desktop\Thesis\dev-environment\runtime\jdk-17
 | 项目：停止全部 | 关闭全部服务 |
 | 项目：完整验证 | 验证版本、端口和主流程 |
 | 数据库：启动 | 只启动 MySQL 和 Redis |
-| 调试：准备环境 | 停止后台服务并准备调试数据库 |
+| 前端：启动（后台） | 后台启动 Vite，可用于网页访问 |
+| 调试：准备前后端 | 停止旧服务，准备数据库和前端 |
 | 后端：启动（前台） | 前台运行 Spring Boot，便于查看日志 |
 | 前端：启动（前台） | 前台运行 Vite |
 | 后端：编译并测试 | 使用便携 Maven 环境编译并测试 |
@@ -147,6 +150,16 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ### 后端调试提示端口占用
 
 已有后台后端正在运行。先执行“项目：停止全部”，再按 `F5`。
+
+### 后端调试成功但网页打不开
+
+确认前端是否正在运行：
+
+1. 打开任务面板，运行“前端：启动（后台）”。
+2. 在浏览器访问 http://127.0.0.1:5173。
+3. 如果仍无法访问，运行“项目：停止全部”，再按 `F5` 使用“后端：调试 Spring Boot”。
+
+当前调试配置会自动启动前端，因此正常情况下不需要再手工运行前端。
 
 ### Java 插件仍要求选择 JDK
 
