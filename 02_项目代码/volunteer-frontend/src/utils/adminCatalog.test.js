@@ -4,7 +4,9 @@ import {
   buildAdmissionQuery,
   buildMajorPayload,
   canCreateAdmissionRecord,
-  createEmptyAdmissionForm
+  createEmptyAdmissionForm,
+  formatFileSize,
+  validateImportFile
 } from './adminCatalog'
 
 describe('admin catalog form helpers', () => {
@@ -92,5 +94,26 @@ describe('admin catalog form helpers', () => {
       planCount: null,
       source: '演示数据（非官方）'
     })
+  })
+
+  it('accepts CSV and Excel files within the size limit', () => {
+    expect(validateImportFile({ name: 'records.csv', size: 1024 }).valid).toBe(true)
+    expect(validateImportFile({ name: 'records.XLSX', size: 1024 }).valid).toBe(true)
+    expect(validateImportFile({ name: 'records.xls', size: 2 * 1024 * 1024 }).valid).toBe(true)
+  })
+
+  it('rejects unsupported files and files over 2 MB', () => {
+    expect(validateImportFile({ name: 'records.xlsm', size: 1024 }).message)
+      .toBe('仅支持 CSV、XLSX 和 XLS 文件')
+    expect(validateImportFile({
+      name: 'records.csv',
+      size: 2 * 1024 * 1024 + 1
+    }).message).toBe('文件不能超过 2 MB')
+  })
+
+  it('formats file sizes for display', () => {
+    expect(formatFileSize(512)).toBe('512 B')
+    expect(formatFileSize(1536)).toBe('1.5 KB')
+    expect(formatFileSize(2 * 1024 * 1024)).toBe('2 MB')
   })
 })

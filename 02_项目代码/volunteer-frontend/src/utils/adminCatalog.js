@@ -70,3 +70,25 @@ export function createEmptyAdmissionForm(year) {
     source: '演示数据（非官方）'
   }
 }
+
+export function validateImportFile(file) {
+  const extension = file?.name?.split('.').pop()?.toLowerCase()
+  if (!['csv', 'xlsx', 'xls'].includes(extension)) {
+    return { valid: false, message: '仅支持 CSV、XLSX 和 XLS 文件' }
+  }
+  if (Number(file.size) > 2 * 1024 * 1024) {
+    return { valid: false, message: '文件不能超过 2 MB' }
+  }
+  return { valid: true, message: '' }
+}
+
+export function formatFileSize(bytes) {
+  const size = Number(bytes) || 0
+  if (size < 1024) {
+    return `${size} B`
+  }
+  if (size < 1024 * 1024) {
+    return `${Number((size / 1024).toFixed(1))} KB`
+  }
+  return `${Number((size / (1024 * 1024)).toFixed(1))} MB`
+}
