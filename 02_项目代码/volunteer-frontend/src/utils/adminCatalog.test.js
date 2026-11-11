@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 import {
   buildAdmissionPayload,
   buildAdmissionQuery,
-  buildMajorPayload
+  buildMajorPayload,
+  canCreateAdmissionRecord,
+  createEmptyAdmissionForm
 } from './adminCatalog'
 
 describe('admin catalog form helpers', () => {
@@ -70,6 +72,25 @@ describe('admin catalog form helpers', () => {
       size: 10,
       majorId: 3,
       year: 2025
+    })
+  })
+
+  it('only enables admission creation when the university has majors', () => {
+    expect(canCreateAdmissionRecord([])).toBe(false)
+    expect(canCreateAdmissionRecord([{ id: 1, name: '软件工程' }])).toBe(true)
+  })
+
+  it('creates a traceable empty admission form with a non-official source', () => {
+    expect(createEmptyAdmissionForm(2026)).toEqual({
+      majorId: null,
+      province: '',
+      year: 2026,
+      subjectTrack: '',
+      batch: '',
+      minScore: null,
+      minRank: null,
+      planCount: null,
+      source: '演示数据（非官方）'
     })
   })
 })

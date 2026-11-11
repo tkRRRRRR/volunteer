@@ -52,3 +52,21 @@ export function buildAdmissionQuery(filters) {
   if (subjectTrack) query.subjectTrack = subjectTrack
   return query
 }
+
+export function canCreateAdmissionRecord(majors) {
+  return Array.isArray(majors) && majors.length > 0
+}
+
+export function createEmptyAdmissionForm(year) {
+  return {
+    majorId: null,
+    province: '',
+    year,
+    subjectTrack: '',
+    batch: '',
+    minScore: null,
+    minRank: null,
+    planCount: null,
+    source: '演示数据（非官方）'
+  }
+}
