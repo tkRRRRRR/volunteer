@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import AppLayout from '../layout/AppLayout.vue'
 import LoginView from '../views/auth/LoginView.vue'
-import DashboardView from '../views/DashboardView.vue'
+import DashboardEntryView from '../views/DashboardEntryView.vue'
 import UniversityListView from '../views/university/UniversityListView.vue'
 import RecommendationView from '../views/recommend/RecommendationView.vue'
 import FavoriteView from '../views/user/FavoriteView.vue'
@@ -23,11 +23,11 @@ const router = createRouter({
       path: '/',
       component: AppLayout,
       children: [
-        { path: '', name: 'dashboard', component: DashboardView, meta: { title: '工作台概览' } },
-        { path: 'universities', name: 'universities', component: UniversityListView, meta: { title: '院校查询' } },
-        { path: 'recommendations', name: 'recommendations', component: RecommendationView, meta: { title: '冲稳保辅助筛选' } },
-        { path: 'favorites', name: 'favorites', component: FavoriteView, meta: { title: '我的收藏' } },
-        { path: 'profile', name: 'profile', component: ProfileView, meta: { title: '个人档案' } },
+        { path: '', name: 'dashboard', component: DashboardEntryView, meta: { title: '工作台概览' } },
+        { path: 'universities', name: 'universities', component: UniversityListView, meta: { roles: ['STUDENT'], title: '院校查询' } },
+        { path: 'recommendations', name: 'recommendations', component: RecommendationView, meta: { roles: ['STUDENT'], title: '冲稳保辅助筛选' } },
+        { path: 'favorites', name: 'favorites', component: FavoriteView, meta: { roles: ['STUDENT'], title: '我的收藏' } },
+        { path: 'profile', name: 'profile', component: ProfileView, meta: { roles: ['STUDENT'], title: '个人档案' } },
         {
           path: 'admin/universities',
           name: 'admin-universities',

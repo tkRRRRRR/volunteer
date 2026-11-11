@@ -12,12 +12,31 @@ import {
   User
 } from '@element-plus/icons-vue'
 import { useAuthStore } from '../stores/auth'
+import { getNavigationSections } from '../utils/roleNavigation'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
 const activeMenu = computed(() => route.path)
+const pageTitle = computed(() => {
+  if (route.meta.title === '工作台概览' && auth.isAdmin) {
+    return '管理概览'
+  }
+  return route.meta.title || '志愿填报辅助系统'
+})
+const navigationSections = computed(() =>
+  getNavigationSections(auth.user?.role)
+)
+const menuIcons = {
+  dashboard: DataBoard,
+  universities: School,
+  recommendations: TrendCharts,
+  favorites: Star,
+  profile: User,
+  adminUniversities: Setting,
+  adminStatistics: DataAnalysis
+}
 
 const logout = () => {
   auth.logout()
@@ -37,34 +56,17 @@ const logout = () => {
       </div>
 
       <el-menu :default-active="activeMenu" router class="side-menu">
-        <el-menu-item index="/">
-          <el-icon><DataBoard /></el-icon>
-          <span>概览</span>
-        </el-menu-item>
-        <el-menu-item index="/universities">
-          <el-icon><School /></el-icon>
-          <span>院校查询</span>
-        </el-menu-item>
-        <el-menu-item index="/recommendations">
-          <el-icon><TrendCharts /></el-icon>
-          <span>冲稳保筛选</span>
-        </el-menu-item>
-        <el-menu-item index="/favorites">
-          <el-icon><Star /></el-icon>
-          <span>我的收藏</span>
-        </el-menu-item>
-        <el-menu-item index="/profile">
-          <el-icon><User /></el-icon>
-          <span>个人档案</span>
-        </el-menu-item>
-        <el-menu-item v-if="auth.isAdmin" index="/admin/universities">
-          <el-icon><Setting /></el-icon>
-          <span>院校维护</span>
-        </el-menu-item>
-        <el-menu-item v-if="auth.isAdmin" index="/admin/statistics">
-          <el-icon><DataAnalysis /></el-icon>
-          <span>数据统计</span>
-        </el-menu-item>
+        <template v-for="section in navigationSections" :key="section.label">
+          <div class="menu-section-label">{{ section.label }}</div>
+          <el-menu-item
+            v-for="item in section.items"
+            :key="item.key"
+            :index="item.path"
+          >
+            <el-icon><component :is="menuIcons[item.key]" /></el-icon>
+            <span>{{ item.label }}</span>
+          </el-menu-item>
+        </template>
       </el-menu>
 
       <div class="sidebar-footer">
@@ -83,7 +85,7 @@ const logout = () => {
       <header class="topbar">
         <div>
           <span class="eyebrow">GAOKAO VOLUNTEER ASSISTANT</span>
-          <h1>{{ route.meta.title || '志愿填报辅助系统' }}</h1>
+          <h1>{{ pageTitle }}</h1>
         </div>
         <div class="topbar-note">
           历史数据仅作辅助参考，不构成录取承诺
@@ -95,3 +97,13 @@ const logout = () => {
     </main>
   </div>
 </template>
+
+<style scoped>
+.menu-section-label {
+  padding: 12px 20px 8px;
+  color: #70849a;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+</style>
