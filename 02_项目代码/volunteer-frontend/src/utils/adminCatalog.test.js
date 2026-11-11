@@ -6,6 +6,7 @@ import {
   canCreateAdmissionRecord,
   createEmptyAdmissionForm,
   formatFileSize,
+  isExcelContentType,
   validateImportFile
 } from './adminCatalog'
 
@@ -115,5 +116,12 @@ describe('admin catalog form helpers', () => {
     expect(formatFileSize(512)).toBe('512 B')
     expect(formatFileSize(1536)).toBe('1.5 KB')
     expect(formatFileSize(2 * 1024 * 1024)).toBe('2 MB')
+  })
+
+  it('recognizes the spreadsheet content type used by template downloads', () => {
+    expect(isExcelContentType(
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )).toBe(true)
+    expect(isExcelContentType('application/json;charset=UTF-8')).toBe(false)
   })
 })

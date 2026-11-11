@@ -1,4 +1,5 @@
 import request from '../utils/request'
+import { isExcelContentType } from '../utils/adminCatalog'
 
 export const listMajors = (universityId, params) =>
   request.get(`/admin/universities/${universityId}/majors`, { params })
@@ -41,7 +42,8 @@ export const downloadAdmissionImportTemplate = async (universityId) => {
       headers: token ? { Authorization: `Bearer ${token}` } : {}
     }
   )
-  if (!response.ok) {
+  const contentType = response.headers.get('content-type')
+  if (!response.ok || !isExcelContentType(contentType)) {
     let message = 'Excel 模板下载失败'
     try {
       const payload = await response.json()

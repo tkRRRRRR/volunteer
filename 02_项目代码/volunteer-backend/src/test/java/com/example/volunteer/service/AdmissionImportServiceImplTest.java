@@ -149,6 +149,42 @@ class AdmissionImportServiceImplTest {
     }
 
     @Test
+    void shouldRejectRowWithoutMajorName() {
+        when(universityMapper.selectById(1L)).thenReturn(university(1L));
+        when(majorMapper.selectList(any())).thenReturn(List.of(major(1L, "软件工程")));
+        when(admissionRecordMapper.selectList(any())).thenReturn(List.of());
+        Map<String, String> values = rowValues("1", "", "2025", "578", "9600");
+        when(parser.parse(any())).thenReturn(List.of(new ParsedAdmissionRow(2, values)));
+
+        AdmissionImportResultVO result = service.importRecords(1L, multipart("records.csv"));
+
+        assertEquals(0, result.successCount());
+        assertTrue(result.errors().get(0).message().contains("专业名称不能为空"));
+    }
+
+    @Test
+    void shouldRejectTextFieldsLongerThanDatabaseColumns() {
+        when(universityMapper.selectById(1L)).thenReturn(university(1L));
+        when(majorMapper.selectList(any())).thenReturn(List.of(major(1L, "软件工程")));
+        when(admissionRecordMapper.selectList(any())).thenReturn(List.of());
+        Map<String, String> values = rowValues("1", "软件工程", "2025", "578", "9600");
+        values.put("province", "省".repeat(31));
+        values.put("subjectTrack", "科".repeat(31));
+        values.put("batch", "批".repeat(31));
+        values.put("source", "源".repeat(256));
+        when(parser.parse(any())).thenReturn(List.of(new ParsedAdmissionRow(2, values)));
+
+        AdmissionImportResultVO result = service.importRecords(1L, multipart("records.xlsx"));
+
+        assertEquals(0, result.successCount());
+        String message = result.errors().get(0).message();
+        assertTrue(message.contains("招生省份不能超过30个字符"));
+        assertTrue(message.contains("科类或选科组合不能超过30个字符"));
+        assertTrue(message.contains("录取批次不能超过30个字符"));
+        assertTrue(message.contains("数据来源不能超过255个字符"));
+    }
+
+    @Test
     void shouldTrimTextFieldsBeforeInsert() {
         when(universityMapper.selectById(1L)).thenReturn(university(1L));
         when(majorMapper.selectList(any())).thenReturn(List.of(major(1L, "软件工程")));

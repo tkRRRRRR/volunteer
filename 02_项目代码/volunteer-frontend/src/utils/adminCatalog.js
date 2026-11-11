@@ -92,3 +92,9 @@ export function formatFileSize(bytes) {
   }
   return `${Number((size / (1024 * 1024)).toFixed(1))} MB`
 }
+
+export function isExcelContentType(contentType) {
+  return String(contentType || '')
+    .toLowerCase()
+    .includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+}

@@ -96,10 +96,15 @@ public class AdmissionImportServiceImpl implements AdmissionImportService {
             Integer minRank = parseInteger(values.get("minRank"), "最低位次", messages);
             Integer planCount = parseOptionalInteger(values.get("planCount"), "计划数", messages);
 
+            requireText(values, "majorName", "专业名称", messages);
             requireText(values, "province", "招生省份", messages);
             requireText(values, "subjectTrack", "科类或选科组合", messages);
             requireText(values, "batch", "录取批次", messages);
             requireText(values, "source", "数据来源", messages);
+            validateLength(values, "province", "招生省份", 30, messages);
+            validateLength(values, "subjectTrack", "科类或选科组合", 30, messages);
+            validateLength(values, "batch", "录取批次", 30, messages);
+            validateLength(values, "source", "数据来源", 255, messages);
 
             Major major = majorId == null ? null : majors.get(majorId);
             if (majorId != null && major == null) {
@@ -268,6 +273,19 @@ public class AdmissionImportServiceImpl implements AdmissionImportService {
     ) {
         if (!StringUtils.hasText(values.get(field))) {
             messages.add(label + "不能为空");
+        }
+    }
+
+    private void validateLength(
+            Map<String, String> values,
+            String field,
+            String label,
+            int maxLength,
+            List<String> messages
+    ) {
+        String value = values.get(field);
+        if (value != null && value.length() > maxLength) {
+            messages.add(label + "不能超过" + maxLength + "个字符");
         }
     }
 
