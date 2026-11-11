@@ -17,6 +17,7 @@ import com.example.volunteer.vo.AdmissionPointVO;
 import com.example.volunteer.vo.MajorVO;
 import com.example.volunteer.vo.UniversityDetailVO;
 import com.example.volunteer.vo.UniversityVO;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -122,6 +123,7 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "recommendations", allEntries = true)
     public UniversityVO create(UniversitySaveRequest request) {
         LocalDateTime now = LocalDateTime.now();
         University university = new University();
@@ -134,6 +136,7 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "recommendations", allEntries = true)
     public UniversityVO update(Long id, UniversitySaveRequest request) {
         University university = requireUniversity(id);
         copyRequest(request, university);
@@ -144,8 +147,15 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "recommendations", allEntries = true)
     public void delete(Long id) {
         requireUniversity(id);
+        long majorCount = majorMapper.selectCount(
+                new LambdaQueryWrapper<Major>().eq(Major::getUniversityId, id)
+        );
+        if (majorCount > 0) {
+            throw BusinessException.badRequest("请先删除该院校下的专业");
+        }
         universityMapper.deleteById(id);
     }
 
