@@ -51,6 +51,8 @@ Authorization: Bearer <token>
 | POST | `/api/admin/universities/{universityId}/admission-records` | 新增录取记录 |
 | PUT | `/api/admin/universities/{universityId}/admission-records/{recordId}` | 更新录取记录 |
 | DELETE | `/api/admin/universities/{universityId}/admission-records/{recordId}` | 删除录取记录 |
+| POST | `/api/admin/universities/{universityId}/admission-records/import` | 批量导入录取记录 |
+| GET | `/api/admin/universities/{universityId}/admission-records/import-template` | 下载 Excel 导入模板 |
 
 录取记录查询支持 `page`、`size`、`majorId`、`year`、`province` 和 `subjectTrack`。每条新增或更新的录取记录都必须绑定当前院校下的具体专业。
 
@@ -62,6 +64,35 @@ Authorization: Bearer <token>
 - 删除仍有专业、录取记录或关联收藏的院校。
 
 院校、专业和录取记录写操作完成后会清除推荐缓存，避免继续返回旧匹配结果。
+
+### 批量导入
+
+上传接口采用 `multipart/form-data`，参数名为 `file`，支持：
+
+- `.csv`：UTF-8 编码，可包含 BOM。
+- `.xlsx`：只读取第一个工作表。
+- `.xls`：只读取第一个工作表。
+
+文件不超过 2 MB，数据不超过 1000 行。必需列：
+
+```text
+majorId,majorName,province,year,subjectTrack,batch,minScore,minRank,planCount,source
+```
+
+`planCount` 可为空，其余字段必填。专业编号和名称必须匹配当前院校已有专业。
+
+导入采用部分成功策略，返回：
+
+```text
+totalRows
+successCount
+failedCount
+errors[{rowNumber,majorId,majorName,message}]
+```
+
+同一文件内重复或数据库中已有的录取记录不会写入。文件级错误返回业务错误；行级错误保留在 `errors` 中。
+
+Excel 模板接口返回当前院校专业示例和标准表头。前端使用带 JWT 的独立二进制请求下载。
 
 ## 推荐与收藏
 
