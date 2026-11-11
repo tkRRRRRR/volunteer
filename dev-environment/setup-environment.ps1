@@ -1,7 +1,8 @@
 ﻿param(
     [switch]$ForceDownload,
     [switch]$SkipFrontendInstall,
-    [switch]$SkipTests
+    [switch]$SkipTests,
+    [switch]$ResetDatabase
 )
 
 . (Join-Path $PSScriptRoot 'scripts\common.ps1')
@@ -147,7 +148,10 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw 'Cannot connect to MySQL. Check logs/mysql-error.log and .env.'
     }
-    if (-not $databaseExists) {
+    if ($ResetDatabase -or -not $databaseExists) {
+        if ($ResetDatabase -and $databaseExists) {
+            Write-Host '[INFO] Rebuilding application database because -ResetDatabase was specified'
+        }
         Push-Location (Join-Path $DatabaseRoot 'schema')
         try {
             & $mysql --protocol=tcp "--host=127.0.0.1" "--port=$mysqlPort" '--user=root' `
