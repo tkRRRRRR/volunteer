@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import AdminCatalogDrawer from '../../components/admin/AdminCatalogDrawer.vue'
 import {
   createUniversity,
   deleteUniversity,
@@ -11,6 +12,8 @@ import {
 const loading = ref(false)
 const saving = ref(false)
 const dialogVisible = ref(false)
+const catalogVisible = ref(false)
+const catalogUniversity = ref(null)
 const editingId = ref(null)
 const rows = ref([])
 const total = ref(0)
@@ -70,6 +73,11 @@ const openEdit = (row) => {
   dialogVisible.value = true
 }
 
+const openCatalog = (row) => {
+  catalogUniversity.value = row
+  catalogVisible.value = true
+}
+
 const save = async () => {
   await formRef.value?.validate()
   saving.value = true
@@ -103,7 +111,7 @@ onMounted(load)
     <div class="page-heading">
       <div>
         <h2>院校数据维护</h2>
-        <p>管理端当前先实现院校基础信息维护，后续继续补充专业和录取记录导入。</p>
+        <p>维护院校基础信息，并进入数据维护抽屉管理专业和历年录取记录。</p>
       </div>
       <el-button type="primary" @click="openCreate">新增院校</el-button>
     </div>
@@ -121,8 +129,9 @@ onMounted(load)
       <el-table-column prop="level" label="层次" width="90" />
       <el-table-column prop="type" label="类型" width="90" />
       <el-table-column prop="tags" label="标签" min-width="180" />
-      <el-table-column label="操作" width="150" fixed="right">
+      <el-table-column label="操作" width="230" fixed="right">
         <template #default="{ row }">
+          <el-button link type="success" @click="openCatalog(row)">数据维护</el-button>
           <el-button link type="primary" @click="openEdit(row)">编辑</el-button>
           <el-button link type="danger" @click="remove(row)">删除</el-button>
         </template>
@@ -171,6 +180,11 @@ onMounted(load)
         <el-button type="primary" :loading="saving" @click="save">保存</el-button>
       </template>
     </el-dialog>
+
+    <AdminCatalogDrawer
+      v-model:visible="catalogVisible"
+      :university="catalogUniversity"
+    />
   </div>
 </template>
 

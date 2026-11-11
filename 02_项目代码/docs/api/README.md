@@ -37,6 +37,32 @@ Authorization: Bearer <token>
 | PUT | `/api/admin/universities/{id}` | 管理员 | 更新院校 |
 | DELETE | `/api/admin/universities/{id}` | 管理员 | 删除院校 |
 
+## 管理端专业与录取记录
+
+所有接口必须由管理员登录后访问，院校编号从路径中取得。
+
+| 方法 | 地址 | 说明 |
+| --- | --- | --- |
+| GET | `/api/admin/universities/{universityId}/majors` | 查询当前院校专业，可传 `keyword` |
+| POST | `/api/admin/universities/{universityId}/majors` | 新增专业 |
+| PUT | `/api/admin/universities/{universityId}/majors/{majorId}` | 更新专业 |
+| DELETE | `/api/admin/universities/{universityId}/majors/{majorId}` | 删除专业 |
+| GET | `/api/admin/universities/{universityId}/admission-records` | 分页查询录取记录 |
+| POST | `/api/admin/universities/{universityId}/admission-records` | 新增录取记录 |
+| PUT | `/api/admin/universities/{universityId}/admission-records/{recordId}` | 更新录取记录 |
+| DELETE | `/api/admin/universities/{universityId}/admission-records/{recordId}` | 删除录取记录 |
+
+录取记录查询支持 `page`、`size`、`majorId`、`year`、`province` 和 `subjectTrack`。每条新增或更新的录取记录都必须绑定当前院校下的具体专业。
+
+后端拒绝以下操作：
+
+- 使用其他院校的专业编号新增录取记录。
+- 同一院校、专业、年份、省份、科类和批次出现重复录取记录。
+- 删除仍有录取记录或收藏引用的专业。
+- 删除仍有专业、录取记录或关联收藏的院校。
+
+院校、专业和录取记录写操作完成后会清除推荐缓存，避免继续返回旧匹配结果。
+
 ## 推荐与收藏
 
 | 方法 | 地址 | 权限 | 说明 |

@@ -8,6 +8,7 @@ import com.example.volunteer.entity.AdmissionRecord;
 import com.example.volunteer.entity.Major;
 import com.example.volunteer.entity.University;
 import com.example.volunteer.mapper.AdmissionRecordMapper;
+import com.example.volunteer.mapper.FavoriteMapper;
 import com.example.volunteer.mapper.MajorMapper;
 import com.example.volunteer.mapper.UniversityMapper;
 import com.example.volunteer.service.impl.UniversityServiceImpl;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,6 +51,9 @@ class UniversityServiceImplTest {
 
     @Mock
     private AdmissionRecordMapper admissionRecordMapper;
+
+    @Mock
+    private FavoriteMapper favoriteMapper;
 
     @InjectMocks
     private UniversityServiceImpl service;
@@ -108,6 +113,51 @@ class UniversityServiceImplTest {
         verify(admissionRecordMapper).selectList(queryCaptor.capture());
         assertTrue(queryCaptor.getValue().getSqlSegment().contains("province"));
         assertTrue(queryCaptor.getValue().getSqlSegment().contains("subject_track"));
+    }
+
+    @Test
+    void shouldRejectDeletingUniversityThatStillHasMajors() {
+        when(universityMapper.selectById(1L)).thenReturn(university());
+        when(majorMapper.selectCount(any())).thenReturn(1L);
+
+        BusinessException exception = assertThrows(
+                BusinessException.class,
+                () -> service.delete(1L)
+        );
+
+        assertEquals("请先删除该院校下的专业", exception.getMessage());
+        verify(universityMapper, never()).deleteById(1L);
+    }
+
+    @Test
+    void shouldRejectDeletingUniversityWithLegacyAdmissionRecord() {
+        when(universityMapper.selectById(1L)).thenReturn(university());
+        when(majorMapper.selectCount(any())).thenReturn(0L);
+        when(admissionRecordMapper.selectCount(any())).thenReturn(1L);
+
+        BusinessException exception = assertThrows(
+                BusinessException.class,
+                () -> service.delete(1L)
+        );
+
+        assertEquals("请先删除该院校下的录取记录", exception.getMessage());
+        verify(universityMapper, never()).deleteById(1L);
+    }
+
+    @Test
+    void shouldRejectDeletingUniversityReferencedByFavorite() {
+        when(universityMapper.selectById(1L)).thenReturn(university());
+        when(majorMapper.selectCount(any())).thenReturn(0L);
+        when(admissionRecordMapper.selectCount(any())).thenReturn(0L);
+        when(favoriteMapper.selectCount(any())).thenReturn(1L);
+
+        BusinessException exception = assertThrows(
+                BusinessException.class,
+                () -> service.delete(1L)
+        );
+
+        assertEquals("请先取消该院校相关的收藏", exception.getMessage());
+        verify(universityMapper, never()).deleteById(1L);
     }
 
     private University university() {

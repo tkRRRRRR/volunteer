@@ -7,9 +7,11 @@ import com.example.volunteer.common.PageResult;
 import com.example.volunteer.dto.UniversityQuery;
 import com.example.volunteer.dto.UniversitySaveRequest;
 import com.example.volunteer.entity.AdmissionRecord;
+import com.example.volunteer.entity.Favorite;
 import com.example.volunteer.entity.Major;
 import com.example.volunteer.entity.University;
 import com.example.volunteer.mapper.AdmissionRecordMapper;
+import com.example.volunteer.mapper.FavoriteMapper;
 import com.example.volunteer.mapper.MajorMapper;
 import com.example.volunteer.mapper.UniversityMapper;
 import com.example.volunteer.service.UniversityService;
@@ -17,6 +19,7 @@ import com.example.volunteer.vo.AdmissionPointVO;
 import com.example.volunteer.vo.MajorVO;
 import com.example.volunteer.vo.UniversityDetailVO;
 import com.example.volunteer.vo.UniversityVO;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -35,15 +38,18 @@ public class UniversityServiceImpl implements UniversityService {
     private final UniversityMapper universityMapper;
     private final MajorMapper majorMapper;
     private final AdmissionRecordMapper admissionRecordMapper;
+    private final FavoriteMapper favoriteMapper;
 
     public UniversityServiceImpl(
             UniversityMapper universityMapper,
             MajorMapper majorMapper,
-            AdmissionRecordMapper admissionRecordMapper
+            AdmissionRecordMapper admissionRecordMapper,
+            FavoriteMapper favoriteMapper
     ) {
         this.universityMapper = universityMapper;
         this.majorMapper = majorMapper;
         this.admissionRecordMapper = admissionRecordMapper;
+        this.favoriteMapper = favoriteMapper;
     }
 
     @Override
@@ -122,6 +128,7 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "recommendations", allEntries = true)
     public UniversityVO create(UniversitySaveRequest request) {
         LocalDateTime now = LocalDateTime.now();
         University university = new University();
@@ -134,6 +141,7 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "recommendations", allEntries = true)
     public UniversityVO update(Long id, UniversitySaveRequest request) {
         University university = requireUniversity(id);
         copyRequest(request, university);
@@ -144,8 +152,30 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "recommendations", allEntries = true)
     public void delete(Long id) {
         requireUniversity(id);
+        long majorCount = majorMapper.selectCount(
+                new LambdaQueryWrapper<Major>().eq(Major::getUniversityId, id)
+        );
+        if (majorCount > 0) {
+            throw BusinessException.badRequest("请先删除该院校下的专业");
+        }
+        // 历史数据允许录取记录不绑定专业，因此专业为空时仍需单独保护院校引用。
+        long admissionCount = admissionRecordMapper.selectCount(
+                new LambdaQueryWrapper<AdmissionRecord>()
+                        .eq(AdmissionRecord::getUniversityId, id)
+        );
+        if (admissionCount > 0) {
+            throw BusinessException.badRequest("请先删除该院校下的录取记录");
+        }
+        long favoriteCount = favoriteMapper.selectCount(
+                new LambdaQueryWrapper<Favorite>()
+                        .eq(Favorite::getUniversityId, id)
+        );
+        if (favoriteCount > 0) {
+            throw BusinessException.badRequest("请先取消该院校相关的收藏");
+        }
         universityMapper.deleteById(id);
     }
 
