@@ -134,7 +134,7 @@ Expected: PASS。
 - Produces: `buildAdmissionTrendOption(admissionPoints, majorId)`
 - Produces: `getUniversityOverview(id, params)` in `api/university.js`
 
-- [ ] **Step 1: 写图表数据转换失败测试**
+- [x] **Step 1: 写图表数据转换失败测试**
 
 测试同一专业三年分数与位次序列、无数据返回空提示配置、不同专业过滤结果。
 
@@ -154,7 +154,7 @@ it('filters points from other majors', () => {
 })
 ```
 
-- [ ] **Step 2: 增加 Vitest 并确认失败**
+- [x] **Step 2: 增加 Vitest 并确认失败**
 
 在 `package.json` 增加 `test:unit`。Run（工作目录为 `02_项目代码/volunteer-frontend`）:
 
@@ -164,11 +164,11 @@ it('filters points from other majors', () => {
 
 Expected: FAIL，原因是图表转换工具尚不存在。
 
-- [ ] **Step 3: 实现详情请求与趋势图**
+- [x] **Step 3: 实现详情请求与趋势图**
 
 抽屉打开后请求详情；展示院校信息、专业表、专业选择器和双轴折线图。请求失败显示重试入口，无专业或无记录显示空状态。
 
-- [ ] **Step 4: 运行前端测试和构建**
+- [x] **Step 4: 运行前端测试和构建**
 
 Run（工作目录为 `02_项目代码/volunteer-frontend`）:
 
@@ -179,7 +179,7 @@ Run（工作目录为 `02_项目代码/volunteer-frontend`）:
 
 Expected: 全部 PASS。
 
-- [ ] **Step 5: 更新进度并提交**
+- [x] **Step 5: 更新进度并提交**
 
 ```text
 新增：完善院校详情和历年录取趋势

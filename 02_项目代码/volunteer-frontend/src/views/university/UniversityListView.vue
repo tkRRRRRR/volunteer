@@ -1,14 +1,24 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getUniversities } from '../../api/university'
+import * as echarts from 'echarts'
+import { getUniversities, getUniversityOverview } from '../../api/university'
 import { addFavorite } from '../../api/favorite'
+import { useAuthStore } from '../../stores/auth'
+import { buildAdmissionTrendOption } from '../../utils/universityChart'
 
+const auth = useAuthStore()
 const loading = ref(false)
 const universities = ref([])
 const total = ref(0)
 const drawerVisible = ref(false)
 const selected = ref(null)
+const detail = ref(null)
+const detailLoading = ref(false)
+const detailError = ref('')
+const selectedMajorId = ref(null)
+const chartRef = ref()
+let chart
 const query = reactive({
   keyword: '',
   province: '',
@@ -33,17 +43,63 @@ const reset = () => {
   load()
 }
 
-const openDetail = (row) => {
+const openDetail = async (row) => {
   selected.value = row
+  detail.value = null
+  detailError.value = ''
   drawerVisible.value = true
+  await loadDetail(row.id)
 }
+
+const loadDetail = async (universityId) => {
+  detailLoading.value = true
+  detailError.value = ''
+  try {
+    detail.value = await getUniversityOverview(universityId, {
+      province: auth.user?.province || undefined,
+      subjectTrack: auth.user?.subjectTrack || undefined
+    })
+    selectedMajorId.value = detail.value.majors?.[0]?.id || null
+    await nextTick()
+    renderChart()
+  } catch {
+    detailError.value = '院校详情加载失败，请稍后重试'
+  } finally {
+    detailLoading.value = false
+  }
+}
+
+const renderChart = async () => {
+  await nextTick()
+  if (!chartRef.value || !detail.value) return
+  chart ||= echarts.init(chartRef.value)
+  chart.setOption(
+    buildAdmissionTrendOption(detail.value.admissionPoints, selectedMajorId.value),
+    true
+  )
+  chart.resize()
+}
+
+const closeDetail = () => {
+  chart?.dispose()
+  chart = null
+}
+
+const resize = () => chart?.resize()
 
 const favorite = async (row) => {
   await addFavorite({ universityId: row.id, majorId: null })
   ElMessage.success('已加入收藏')
 }
 
+watch(selectedMajorId, renderChart)
+
 onMounted(load)
+onMounted(() => window.addEventListener('resize', resize))
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resize)
+  closeDetail()
+})
 </script>
 
 <template>
@@ -106,18 +162,57 @@ onMounted(load)
       />
     </div>
 
-    <el-drawer v-model="drawerVisible" title="院校详情" size="460px">
-      <template v-if="selected">
+    <el-drawer v-model="drawerVisible" title="院校详情" size="560px" @closed="closeDetail">
+      <div v-loading="detailLoading" class="detail-body">
+        <el-result
+          v-if="detailError"
+          icon="error"
+          title="详情加载失败"
+          :sub-title="detailError"
+        >
+          <template #extra>
+            <el-button type="primary" @click="loadDetail(selected.id)">重新加载</el-button>
+          </template>
+        </el-result>
+
+        <template v-else-if="detail">
         <div class="detail-title">
           <span>院校档案</span>
-          <h3>{{ selected.name }}</h3>
-          <p>{{ selected.province }} · {{ selected.city }} · {{ selected.level }} · {{ selected.type }}</p>
+          <h3>{{ detail.university.name }}</h3>
+          <p>{{ detail.university.province }} · {{ detail.university.city }} · {{ detail.university.level }} · {{ detail.university.type }}</p>
         </div>
         <el-descriptions :column="1" border>
-          <el-descriptions-item label="院校标签">{{ selected.tags }}</el-descriptions-item>
-          <el-descriptions-item label="院校简介">{{ selected.description }}</el-descriptions-item>
-          <el-descriptions-item label="官网">{{ selected.website }}</el-descriptions-item>
+          <el-descriptions-item label="院校标签">{{ detail.university.tags }}</el-descriptions-item>
+          <el-descriptions-item label="院校简介">{{ detail.university.description }}</el-descriptions-item>
+          <el-descriptions-item label="官网">{{ detail.university.website }}</el-descriptions-item>
         </el-descriptions>
+
+        <div class="detail-section">
+          <h4>开设专业</h4>
+          <el-table v-if="detail.majors.length" :data="detail.majors" size="small" stripe>
+            <el-table-column prop="name" label="专业" min-width="170" />
+            <el-table-column prop="category" label="门类" width="90" />
+            <el-table-column prop="subjectRequirement" label="选科要求" min-width="130" />
+          </el-table>
+          <el-empty v-else description="该院校暂无专业数据" :image-size="72" />
+        </div>
+
+        <div v-if="detail.majors.length" class="detail-section">
+          <div class="chart-heading">
+            <h4>历年录取趋势</h4>
+            <el-select v-model="selectedMajorId" size="small" style="width: 190px">
+              <el-option
+                v-for="major in detail.majors"
+                :key="major.id"
+                :label="major.name"
+                :value="major.id"
+              />
+            </el-select>
+          </div>
+          <div v-if="detail.admissionPoints.length" ref="chartRef" class="trend-chart"></div>
+          <el-empty v-else description="该院校暂无可展示的录取数据" :image-size="72" />
+        </div>
+
         <el-alert
           class="detail-alert"
           title="该页面为演示院校，不能作为真实招生信息使用。"
@@ -125,7 +220,8 @@ onMounted(load)
           :closable="false"
           show-icon
         />
-      </template>
+        </template>
+      </div>
     </el-drawer>
   </div>
 </template>
@@ -154,6 +250,36 @@ onMounted(load)
 
 .detail-title {
   padding: 4px 0 22px;
+}
+
+.detail-body {
+  min-height: 360px;
+}
+
+.detail-section {
+  margin-top: 24px;
+}
+
+.detail-section h4 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.chart-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.chart-heading h4 {
+  margin: 0;
+}
+
+.trend-chart {
+  width: 100%;
+  height: 290px;
 }
 
 .detail-title span {
