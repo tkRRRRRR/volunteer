@@ -52,7 +52,7 @@
 - Produces: `UniversityService.getOverview(Long id, String province, String subjectTrack)`
 - Consumes: existing `UniversityMapper`、`MajorMapper`、`AdmissionRecordMapper`
 
-- [ ] **Step 1: 写院校详情服务失败测试**
+- [x] **Step 1: 写院校详情服务失败测试**
 
 在 `UniversityServiceImplTest` 中断言：
 
@@ -83,7 +83,7 @@ void shouldIncludeOptionalProvinceAndSubjectTrackFilters() {
 }
 ```
 
-- [ ] **Step 2: 运行测试确认失败**
+- [x] **Step 2: 运行测试确认失败**
 
 Run（工作目录为 `02_项目代码/volunteer-backend`）:
 
@@ -93,11 +93,11 @@ Run（工作目录为 `02_项目代码/volunteer-backend`）:
 
 Expected: FAIL，原因是详情 VO、服务和 Mapper 依赖尚不存在。
 
-- [ ] **Step 3: 实现聚合接口**
+- [x] **Step 3: 实现聚合接口**
 
 `UniversityServiceImpl` 注入三个 Mapper；按院校编号查询专业，并按可选省份、科类查询录取记录。录取记录按年份、专业编号升序。
 
-- [ ] **Step 4: 运行测试确认通过**
+- [x] **Step 4: 运行测试确认通过**
 
 Run（工作目录为 `02_项目代码/volunteer-backend`）:
 
@@ -107,7 +107,7 @@ Run（工作目录为 `02_项目代码/volunteer-backend`）:
 
 Expected: PASS。
 
-- [ ] **Step 5: 创建进度记录并提交**
+- [x] **Step 5: 创建进度记录并提交**
 
 记录阶段目标、接口契约、涉及文件和测试结果，然后提交：
 

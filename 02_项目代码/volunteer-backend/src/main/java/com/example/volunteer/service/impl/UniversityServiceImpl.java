@@ -6,16 +6,25 @@ import com.example.volunteer.common.BusinessException;
 import com.example.volunteer.common.PageResult;
 import com.example.volunteer.dto.UniversityQuery;
 import com.example.volunteer.dto.UniversitySaveRequest;
+import com.example.volunteer.entity.AdmissionRecord;
+import com.example.volunteer.entity.Major;
 import com.example.volunteer.entity.University;
+import com.example.volunteer.mapper.AdmissionRecordMapper;
+import com.example.volunteer.mapper.MajorMapper;
 import com.example.volunteer.mapper.UniversityMapper;
 import com.example.volunteer.service.UniversityService;
+import com.example.volunteer.vo.AdmissionPointVO;
+import com.example.volunteer.vo.MajorVO;
+import com.example.volunteer.vo.UniversityDetailVO;
 import com.example.volunteer.vo.UniversityVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 提供院校公开查询以及管理员端的院校基础信息维护。
@@ -24,9 +33,17 @@ import java.util.List;
 public class UniversityServiceImpl implements UniversityService {
 
     private final UniversityMapper universityMapper;
+    private final MajorMapper majorMapper;
+    private final AdmissionRecordMapper admissionRecordMapper;
 
-    public UniversityServiceImpl(UniversityMapper universityMapper) {
+    public UniversityServiceImpl(
+            UniversityMapper universityMapper,
+            MajorMapper majorMapper,
+            AdmissionRecordMapper admissionRecordMapper
+    ) {
         this.universityMapper = universityMapper;
+        this.majorMapper = majorMapper;
+        this.admissionRecordMapper = admissionRecordMapper;
     }
 
     @Override
@@ -58,6 +75,49 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     public UniversityVO getById(Long id) {
         return UniversityVO.from(requireUniversity(id));
+    }
+
+    @Override
+    public UniversityDetailVO getOverview(Long id, String province, String subjectTrack) {
+        University university = requireUniversity(id);
+        List<Major> majors = majorMapper.selectList(new LambdaQueryWrapper<Major>()
+                .eq(Major::getUniversityId, id)
+                .orderByAsc(Major::getId));
+
+        LambdaQueryWrapper<AdmissionRecord> recordQuery = new LambdaQueryWrapper<AdmissionRecord>()
+                .eq(AdmissionRecord::getUniversityId, id);
+        // 详情页默认使用学生所在省份和科类，未填写时保留全部演示记录。
+        if (StringUtils.hasText(province)) {
+            recordQuery.eq(AdmissionRecord::getProvince, province.trim());
+        }
+        if (StringUtils.hasText(subjectTrack)) {
+            recordQuery.eq(AdmissionRecord::getSubjectTrack, subjectTrack.trim());
+        }
+        recordQuery.orderByAsc(AdmissionRecord::getYear)
+                .orderByAsc(AdmissionRecord::getMajorId);
+
+        List<AdmissionRecord> records = admissionRecordMapper.selectList(recordQuery);
+        Map<Long, String> majorNames = new HashMap<>();
+        for (Major major : majors) {
+            majorNames.put(major.getId(), major.getName());
+        }
+        List<AdmissionPointVO> admissionPoints = records.stream()
+                .map(record -> new AdmissionPointVO(
+                        record.getMajorId(),
+                        majorNames.getOrDefault(record.getMajorId(), "院校专业组"),
+                        record.getYear(),
+                        record.getMinScore(),
+                        record.getMinRank(),
+                        record.getSubjectTrack(),
+                        record.getBatch(),
+                        record.getSource()
+                ))
+                .toList();
+        return new UniversityDetailVO(
+                UniversityVO.from(university),
+                majors.stream().map(MajorVO::from).toList(),
+                admissionPoints
+        );
     }
 
     @Override
