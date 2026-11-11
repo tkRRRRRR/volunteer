@@ -17,8 +17,9 @@ export function buildComparisonRows(selectedFavorites, detailByUniversityId) {
       }
     }
 
+    // 整校收藏没有具体专业，不能从多个专业中随意挑一条录取数据。
     const points = [...(detail.admissionPoints || [])]
-      .filter((point) => !favorite.majorId || point.majorId === favorite.majorId)
+      .filter((point) => favorite.majorId && point.majorId === favorite.majorId)
       .sort((left, right) => right.year - left.year)
     const latest = points[0]
     return {

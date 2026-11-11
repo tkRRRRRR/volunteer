@@ -68,4 +68,19 @@ describe('favorite comparison', () => {
     expect(rows[0].minScore).toBe(578)
     expect(rows[0].minRank).toBe(9600)
   })
+
+  it('does not use an arbitrary major point for a university-level favorite', () => {
+    const universityFavorite = {
+      ...favorites[0],
+      id: 4,
+      majorId: null,
+      majorName: '院校专业组'
+    }
+
+    const rows = buildComparisonRows([universityFavorite], detailMap)
+
+    expect(rows[0].latestYear).toBeNull()
+    expect(rows[0].minScore).toBeNull()
+    expect(rows[0].minRank).toBeNull()
+  })
 })
