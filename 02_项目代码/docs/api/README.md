@@ -126,19 +126,21 @@ Excel 模板接口返回当前院校专业示例和标准表头。前端使用�
 
 收藏对比由前端完成：先从收藏列表选择 2 至 4 项，再按院校编号请求详情接口。前端保留单个请求失败项并标记，不影响其他收藏项展示。
 
-推荐请求示例：
+推荐请求支持“只填分数”或“只填位次”，未使用的字段传 `null`。按位次筛选示例：
 
 ```json
 {
   "province": "山西",
   "examYear": 2026,
   "subjectTrack": "物理类",
-  "score": 560,
+  "score": null,
   "provinceRank": 10000,
   "preferredProvince": "",
   "universityLevel": "",
   "keyword": ""
 }
 ```
+
+按分数筛选时改为填写 `score`，并将 `provinceRank` 设为 `null`，其余字段保持不变。
 
 在线接口文档由 Springdoc 自动生成，后端启动后访问 `http://localhost:8080/swagger-ui.html`。
