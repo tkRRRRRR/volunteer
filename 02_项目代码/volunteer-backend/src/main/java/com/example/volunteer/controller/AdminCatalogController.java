@@ -1,9 +1,13 @@
 package com.example.volunteer.controller;
 
 import com.example.volunteer.common.ApiResponse;
+import com.example.volunteer.common.PageResult;
 import com.example.volunteer.common.RequireRole;
+import com.example.volunteer.dto.AdminAdmissionQuery;
+import com.example.volunteer.dto.AdmissionRecordSaveRequest;
 import com.example.volunteer.dto.MajorSaveRequest;
 import com.example.volunteer.service.AdminCatalogService;
+import com.example.volunteer.vo.AdminAdmissionRecordVO;
 import com.example.volunteer.vo.MajorVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -67,6 +71,46 @@ public class AdminCatalogController {
             @PathVariable Long majorId
     ) {
         adminCatalogService.deleteMajor(universityId, majorId);
+        return ApiResponse.ok();
+    }
+
+    @Operation(summary = "分页查询院校录取记录")
+    @GetMapping("/{universityId}/admission-records")
+    public ApiResponse<PageResult<AdminAdmissionRecordVO>> pageAdmissionRecords(
+            @PathVariable Long universityId,
+            @Valid AdminAdmissionQuery query
+    ) {
+        return ApiResponse.ok(adminCatalogService.pageAdmissionRecords(universityId, query));
+    }
+
+    @Operation(summary = "新增院校录取记录")
+    @PostMapping("/{universityId}/admission-records")
+    public ApiResponse<AdminAdmissionRecordVO> createAdmissionRecord(
+            @PathVariable Long universityId,
+            @Valid @RequestBody AdmissionRecordSaveRequest request
+    ) {
+        return ApiResponse.ok(adminCatalogService.createAdmissionRecord(universityId, request));
+    }
+
+    @Operation(summary = "更新院校录取记录")
+    @PutMapping("/{universityId}/admission-records/{recordId}")
+    public ApiResponse<AdminAdmissionRecordVO> updateAdmissionRecord(
+            @PathVariable Long universityId,
+            @PathVariable Long recordId,
+            @Valid @RequestBody AdmissionRecordSaveRequest request
+    ) {
+        return ApiResponse.ok(
+                adminCatalogService.updateAdmissionRecord(universityId, recordId, request)
+        );
+    }
+
+    @Operation(summary = "删除院校录取记录")
+    @DeleteMapping("/{universityId}/admission-records/{recordId}")
+    public ApiResponse<Void> deleteAdmissionRecord(
+            @PathVariable Long universityId,
+            @PathVariable Long recordId
+    ) {
+        adminCatalogService.deleteAdmissionRecord(universityId, recordId);
         return ApiResponse.ok();
     }
 }
