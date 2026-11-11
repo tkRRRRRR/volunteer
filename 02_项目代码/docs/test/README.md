@@ -16,6 +16,25 @@ cd volunteer-backend
 mvn test
 ```
 
+`UniversityServiceImplTest` 覆盖院校详情聚合、空专业和空录取记录、院校不存在以及省份和科类筛选条件。
+
+## 前端单元测试
+
+前端使用 Vitest 测试纯数据转换，不依赖浏览器：
+
+- 院校趋势图：三年分数序列、三年位次序列、专业过滤和空状态。
+- 收藏对比：2 至 4 项选择限制、最近录取点选择和单个详情失败时的降级展示。
+
+运行命令：
+
+```powershell
+cd volunteer-frontend
+npm run test:unit
+npm run build
+```
+
+当前自动化测试结果：后端 8 项通过，前端 10 项通过。
+
 ## 后续手工测试
 
 1. 学生注册、登录和错误密码提示。

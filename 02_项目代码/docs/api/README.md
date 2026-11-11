@@ -32,6 +32,7 @@ Authorization: Bearer <token>
 | --- | --- | --- | --- |
 | GET | `/api/universities` | 公开 | 按关键词、省份、层次分页查询 |
 | GET | `/api/universities/{id}` | 公开 | 查看院校详情 |
+| GET | `/api/universities/{id}/overview` | 公开 | 查看专业和历年录取趋势 |
 | POST | `/api/admin/universities` | 管理员 | 新增院校 |
 | PUT | `/api/admin/universities/{id}` | 管理员 | 更新院校 |
 | DELETE | `/api/admin/universities/{id}` | 管理员 | 删除院校 |
@@ -44,6 +45,10 @@ Authorization: Bearer <token>
 | GET | `/api/favorites` | 登录用户 | 查看我的收藏 |
 | POST | `/api/favorites` | 登录用户 | 收藏院校或专业 |
 | DELETE | `/api/favorites/{id}` | 登录用户 | 取消收藏 |
+
+院校详情查询支持可选参数 `province` 和 `subjectTrack`。不传参数时返回全部记录，传入后仅返回匹配省份和科类的录取记录。返回结构包含基础院校信息、专业列表和按年份升序排列的录取数据点。
+
+收藏对比由前端完成：先从收藏列表选择 2 至 4 项，再按院校编号请求详情接口。前端保留单个请求失败项并标记，不影响其他收藏项展示。
 
 推荐请求示例：
 
