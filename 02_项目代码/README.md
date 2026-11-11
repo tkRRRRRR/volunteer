@@ -75,6 +75,31 @@ npm run dev
 
 演示院校名称和录取记录均为虚构数据，不代表任何学校的真实招生结果。
 
+## 丰富演示数据
+
+当前种子数据包含：
+
+- 66 所院校，足以展示 7 页院校列表。
+- 264 个专业，每所院校 4 个专业。
+- 792 条 2023 至 2025 年录取记录，每所院校 12 条。
+- 27 个学生账号，足以展示 3 页学生列表。
+- 81 条收藏记录。
+
+真实院校名称仅用于界面展示，分数、位次、招生计划和收藏关系全部为虚构演示数据，来源统一标注为“演示数据（非官方，仅用于系统展示）”。
+
+重新生成种子 SQL：
+
+```powershell
+cd 02_项目代码
+& '..\dev-environment\runtime\node-20.18.1\node.exe' scripts\generate-demo-seed.mjs
+```
+
+重新导入会清空并重建演示业务数据：
+
+```powershell
+& '..\dev-environment\setup-environment.ps1' -ResetDatabase
+```
+
 ## Redis 模式
 
 默认使用 Spring 本地缓存，便于单独启动。启动 Redis 后，用以下参数运行后端可启用 Redis 缓存：
