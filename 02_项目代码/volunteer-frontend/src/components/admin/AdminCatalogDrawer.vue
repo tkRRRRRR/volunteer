@@ -63,6 +63,7 @@ const handleMajorChanged = () => {
         <el-tab-pane label="录取记录" name="admissions" lazy>
           <AdminAdmissionTab
             :university-id="university.id"
+            :university-name="university.name"
             :major-revision="majorRevision"
           />
         </el-tab-pane>

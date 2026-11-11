@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import AdminAdmissionImportDialog from './AdminAdmissionImportDialog.vue'
 import {
   createAdmissionRecord,
   deleteAdmissionRecord,
@@ -20,6 +21,10 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  universityName: {
+    type: String,
+    default: ''
+  },
   majorRevision: {
     type: Number,
     default: 0
@@ -35,6 +40,7 @@ const rows = ref([])
 const total = ref(0)
 const errorMessage = ref('')
 const dialogVisible = ref(false)
+const importVisible = ref(false)
 const editingId = ref(null)
 const formRef = ref()
 const filters = reactive({
@@ -128,6 +134,14 @@ const openCreate = () => {
   dialogVisible.value = true
 }
 
+const openImport = () => {
+  if (!canCreate.value) {
+    ElMessage.warning('请先在专业维护页签中为该院校添加专业')
+    return
+  }
+  importVisible.value = true
+}
+
 const openEdit = (row) => {
   editingId.value = row.id
   Object.assign(form, {
@@ -218,17 +232,22 @@ onMounted(reload)
       <el-button type="primary" @click="search">查询</el-button>
       <el-button @click="resetFilters">重置</el-button>
     </div>
-    <el-tooltip
-      :disabled="canCreate"
-      content="请先添加专业"
-      placement="top"
-    >
-      <span>
-        <el-button type="primary" :disabled="!canCreate" @click="openCreate">
-          新增录取记录
-        </el-button>
-      </span>
-    </el-tooltip>
+    <div class="action-buttons">
+      <el-tooltip
+        :disabled="canCreate"
+        content="请先添加专业"
+        placement="top"
+      >
+        <span>
+          <el-button :disabled="!canCreate" @click="openImport">
+            批量导入
+          </el-button>
+        </span>
+      </el-tooltip>
+      <el-button type="primary" :disabled="!canCreate" @click="openCreate">
+        新增录取记录
+      </el-button>
+    </div>
   </div>
 
   <el-alert
@@ -330,6 +349,13 @@ onMounted(reload)
       <el-button type="primary" :loading="saving" @click="save">保存</el-button>
     </template>
   </el-dialog>
+
+  <AdminAdmissionImportDialog
+    v-model:visible="importVisible"
+    :university-id="universityId"
+    :university-name="universityName"
+    @imported="loadRecords"
+  />
 </template>
 
 <style scoped>
@@ -344,6 +370,12 @@ onMounted(reload)
 .filter-grid {
   display: flex;
   flex-wrap: wrap;
+  gap: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
   gap: 10px;
 }
 
