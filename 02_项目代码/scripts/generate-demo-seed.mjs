@@ -157,12 +157,16 @@ universities.forEach(([, , , , type, tier], universityIndex) => {
       `(${currentMajorId}, ${universityId}, ${sql(majorName)}, ${sql(category)}, ${sql(requirement)}, ${sql(`用于系统演示的${majorName}专业条目。`)})`
     )
 
-    const baseScore = tier === 1 ? 600 : tier === 2 ? 555 : 500
-    const baseRank = tier === 1 ? 9000 : tier === 2 ? 22000 : 50000
+    const baseScore = tier === 1 ? 620 : tier === 2 ? 575 : 510
+    const baseRank = tier === 1
+      ? 5000
+      : tier === 2
+        ? 12000 + (universityIndex % 5) * 1500
+        : 35000 + (universityIndex % 4) * 3000
     for (let yearOffset = 0; yearOffset < 3; yearOffset++) {
       const year = 2023 + yearOffset
       const minScore = baseScore + (universityIndex % 5) * 3 + yearOffset * 4 + majorIndex * 2
-      const minRank = baseRank - yearOffset * 2000 - majorIndex * 500
+      const minRank = baseRank - yearOffset * 1800 - majorIndex * 400
       const planCount = 24 + (universityIndex % 12) * 2 + majorIndex * 3
       admissionRows.push(
         `(${universityId}, ${currentMajorId}, '山西', ${year}, '物理类', '本科批', ${minScore}, ${minRank}, ${planCount}, ${sql(source)}, '2026-10-15 09:00:00')`

@@ -9,6 +9,7 @@ import com.example.volunteer.mapper.AdmissionRecordMapper;
 import com.example.volunteer.mapper.MajorMapper;
 import com.example.volunteer.mapper.UniversityMapper;
 import com.example.volunteer.service.RecommendationScorer;
+import com.example.volunteer.service.RecommendationResultSelector;
 import com.example.volunteer.service.RecommendationService;
 import com.example.volunteer.vo.RecommendationVO;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -140,9 +140,8 @@ public class RecommendationServiceImpl implements RecommendationService {
             ));
         }
 
-        // 匹配分高的结果优先展示，并限制数量以控制页面信息量。
-        results.sort(Comparator.comparing(RecommendationVO::matchScore).reversed());
-        return results.stream().limit(MAX_RESULTS).toList();
+        // 结果较多时保留冲刺、稳妥和保底的代表项，避免只展示同一等级。
+        return RecommendationResultSelector.select(results, MAX_RESULTS);
     }
 
     private boolean matchesFilters(University university, Major major, RecommendationRequest request) {
