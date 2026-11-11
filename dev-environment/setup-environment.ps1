@@ -24,7 +24,7 @@ if (-not (Test-Path -LiteralPath $ConfigPath)) {
     Write-Host "[OK] Created local configuration: $ConfigPath"
 }
 
-$manifest = Import-PowerShellDataFile -LiteralPath $ManifestPath
+$manifest = Import-EnvironmentManifest -Path $ManifestPath
 
 function Get-RuntimeSpec {
     param([string]$Key)

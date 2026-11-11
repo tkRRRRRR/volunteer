@@ -5,7 +5,7 @@ param(
 
 . (Join-Path $PSScriptRoot 'scripts\common.ps1')
 
-$manifest = Import-PowerShellDataFile -LiteralPath $ManifestPath
+$manifest = Import-EnvironmentManifest -Path $ManifestPath
 $jdkHome = Join-Path $RuntimeRoot $manifest.Jdk.TargetDirectory
 $mavenHome = Join-Path $RuntimeRoot $manifest.Maven.TargetDirectory
 $backendPort = [int](Get-ConfigValue 'BACKEND_PORT' '8080')

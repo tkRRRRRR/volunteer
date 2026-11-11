@@ -187,6 +187,14 @@ function Write-Section {
     Write-Host "== $Text =="
 }
 
+function Import-EnvironmentManifest {
+    param([string]$Path)
+
+    # 直接执行受版本控制的本地数据文件，避免依赖可自动加载的 PowerShell 模块。
+    $content = Get-Content -LiteralPath $Path -Raw
+    return & ([ScriptBlock]::Create($content))
+}
+
 function Quote-ProcessArgument {
     param([string]$Value)
     if ($Value -match '\s') {

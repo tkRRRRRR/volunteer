@@ -1,7 +1,7 @@
 ﻿# 环境检查脚本：只验证已启动的服务，不会自动启动数据库或前后端。
 . (Join-Path $PSScriptRoot 'scripts\common.ps1')
 
-$manifest = Import-PowerShellDataFile -LiteralPath $ManifestPath
+$manifest = Import-EnvironmentManifest -Path $ManifestPath
 $jdkHome = Join-Path $RuntimeRoot $manifest.Jdk.TargetDirectory
 $mavenHome = Join-Path $RuntimeRoot $manifest.Maven.TargetDirectory
 $nodeHome = Join-Path $RuntimeRoot $manifest.Node.TargetDirectory

@@ -1,6 +1,6 @@
 ﻿. (Join-Path $PSScriptRoot 'scripts\common.ps1')
 
-$manifest = Import-PowerShellDataFile -LiteralPath $ManifestPath
+$manifest = Import-EnvironmentManifest -Path $ManifestPath
 $mysqlHome = Join-Path $RuntimeRoot $manifest.MySql.TargetDirectory
 $redisHome = Join-Path $RuntimeRoot $manifest.Redis.TargetDirectory
 $mysqlData = Join-Path $DataRoot 'mysql'

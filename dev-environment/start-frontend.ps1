@@ -5,7 +5,7 @@ param(
 
 . (Join-Path $PSScriptRoot 'scripts\common.ps1')
 
-$manifest = Import-PowerShellDataFile -LiteralPath $ManifestPath
+$manifest = Import-EnvironmentManifest -Path $ManifestPath
 $nodeHome = Join-Path $RuntimeRoot $manifest.Node.TargetDirectory
 $frontendPort = [int](Get-ConfigValue 'FRONTEND_PORT' '5173')
 $backendPort = [int](Get-ConfigValue 'BACKEND_PORT' '8080')
