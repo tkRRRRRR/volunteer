@@ -63,7 +63,7 @@ export function buildYearTrendOption(trends) {
       top: 0,
       data: ['记录数量', '平均最低分', '平均最低位次']
     },
-    grid: { left: 48, right: 74, top: 48, bottom: 42 },
+    grid: { left: 48, right: 132, top: 52, bottom: 42 },
     xAxis: {
       type: 'category',
       data: trends.map((item) => item.year),
@@ -86,7 +86,7 @@ export function buildYearTrendOption(trends) {
         type: 'value',
         name: '最低位次',
         position: 'right',
-        offset: 54,
+        offset: 64,
         axisLabel: { color: '#64748b' }
       }
     ],
