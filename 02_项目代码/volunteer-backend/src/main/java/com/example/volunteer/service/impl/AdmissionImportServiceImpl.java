@@ -18,7 +18,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.ArrayList;
@@ -157,6 +166,57 @@ public class AdmissionImportServiceImpl implements AdmissionImportService {
                 errors.size(),
                 errors
         );
+    }
+
+    @Override
+    public byte[] buildTemplate(Long universityId) {
+        requireUniversity(universityId);
+        List<Major> majors = majorMapper.selectList(
+                new LambdaQueryWrapper<Major>()
+                        .eq(Major::getUniversityId, universityId)
+                        .orderByAsc(Major::getId)
+        );
+        if (majors.isEmpty()) {
+            throw BusinessException.badRequest("请先为该院校添加专业");
+        }
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+             ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("录取记录导入");
+            Row header = sheet.createRow(0);
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            for (int index = 0; index < AdmissionFileParser.HEADER_ORDER.size(); index++) {
+                String name = AdmissionFileParser.HEADER_ORDER.get(index);
+                var cell = header.createCell(index);
+                cell.setCellValue(name);
+                cell.setCellStyle(headerStyle);
+                sheet.setColumnWidth(index, index == 1 || index == 9 ? 22 * 256 : 14 * 256);
+            }
+
+            Major sample = majors.get(0);
+            Row example = sheet.createRow(1);
+            example.createCell(0).setCellValue(sample.getId());
+            example.createCell(1).setCellValue(sample.getName());
+            example.createCell(2).setCellValue("山西");
+            example.createCell(3).setCellValue(Year.now().getValue() - 1);
+            example.createCell(4).setCellValue("物理类");
+            example.createCell(5).setCellValue("本科批");
+            example.createCell(6).setCellValue(578);
+            example.createCell(7).setCellValue(9600);
+            example.createCell(8).setCellValue(38);
+            example.createCell(9).setCellValue("演示数据（非官方）");
+            sheet.createFreezePane(0, 1);
+
+            workbook.write(output);
+            return output.toByteArray();
+        } catch (IOException exception) {
+            throw new IllegalStateException("Excel 模板生成失败", exception);
+        }
     }
 
     private University requireUniversity(Long universityId) {

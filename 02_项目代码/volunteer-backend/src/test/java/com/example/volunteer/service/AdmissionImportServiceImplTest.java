@@ -14,6 +14,9 @@ import com.example.volunteer.service.importing.AdmissionFileParser;
 import com.example.volunteer.service.importing.ParsedAdmissionRow;
 import com.example.volunteer.vo.AdmissionImportResultVO;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.Year;
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,6 +179,36 @@ class AdmissionImportServiceImplTest {
         );
 
         assertEquals("院校不存在", exception.getMessage());
+    }
+
+    @Test
+    void shouldBuildExcelTemplateForCurrentMajors() throws Exception {
+        when(universityMapper.selectById(1L)).thenReturn(university(1L));
+        when(majorMapper.selectList(any())).thenReturn(List.of(major(1L, "软件工程")));
+
+        byte[] content = service.buildTemplate(1L);
+
+        try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(content))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            assertEquals("录取记录导入", sheet.getSheetName());
+            assertEquals("majorId", sheet.getRow(0).getCell(0).getStringCellValue());
+            assertEquals("软件工程", sheet.getRow(1).getCell(1).getStringCellValue());
+            assertEquals("演示数据（非官方）",
+                    sheet.getRow(1).getCell(9).getStringCellValue());
+        }
+    }
+
+    @Test
+    void shouldRejectTemplateWhenUniversityHasNoMajors() {
+        when(universityMapper.selectById(1L)).thenReturn(university(1L));
+        when(majorMapper.selectList(any())).thenReturn(List.of());
+
+        BusinessException exception = assertThrows(
+                BusinessException.class,
+                () -> service.buildTemplate(1L)
+        );
+
+        assertEquals("请先为该院校添加专业", exception.getMessage());
     }
 
     private ParsedAdmissionRow parsed(

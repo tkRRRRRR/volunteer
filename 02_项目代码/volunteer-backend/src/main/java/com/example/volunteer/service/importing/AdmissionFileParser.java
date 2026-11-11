@@ -46,7 +46,7 @@ public class AdmissionFileParser {
             "source"
     );
 
-    private static final List<String> REQUIRED_HEADER_ORDER = List.of(
+    public static final List<String> HEADER_ORDER = List.of(
             "majorId",
             "majorName",
             "province",
@@ -191,7 +191,7 @@ public class AdmissionFileParser {
                 throw BusinessException.badRequest("表头不能重复：" + header);
             }
         }
-        for (String required : REQUIRED_HEADER_ORDER) {
+        for (String required : HEADER_ORDER) {
             if (!seen.contains(required)) {
                 throw BusinessException.badRequest("缺少必需列：" + required);
             }

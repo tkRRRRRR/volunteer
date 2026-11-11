@@ -7,4 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface AdmissionImportService {
 
     AdmissionImportResultVO importRecords(Long universityId, MultipartFile file);
+
+    byte[] buildTemplate(Long universityId);
 }
