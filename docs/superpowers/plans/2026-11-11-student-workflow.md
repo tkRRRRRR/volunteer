@@ -201,7 +201,7 @@ Expected: 全部 PASS。
 - Produces: `buildComparisonRows(selectedFavorites, detailByUniversityId)`
 - Produces: `canCompareFavorites(selectionCount)`
 
-- [ ] **Step 1: 写收藏对比失败测试**
+- [x] **Step 1: 写收藏对比失败测试**
 
 覆盖 0、1、2、4、5 项选择；同一院校不同专业；一个详情请求失败但其他项仍生成对比行。
 
@@ -218,7 +218,7 @@ it('keeps unavailable detail items while rendering successful comparisons', () =
 })
 ```
 
-- [ ] **Step 2: 运行测试确认失败**
+- [x] **Step 2: 运行测试确认失败**
 
 Run（工作目录为 `02_项目代码/volunteer-frontend`）:
 
@@ -228,11 +228,11 @@ Run（工作目录为 `02_项目代码/volunteer-frontend`）:
 
 Expected: FAIL，原因是收藏对比工具尚不存在。
 
-- [ ] **Step 3: 实现收藏选择与对比弹窗**
+- [x] **Step 3: 实现收藏选择与对比弹窗**
 
 表格增加多选列和 4 项上限提示；对比弹窗展示院校、专业、地区、层次、最近年份、最低分、最低位次和数据来源。
 
-- [ ] **Step 4: 运行测试和构建**
+- [x] **Step 4: 运行测试和构建**
 
 Run（工作目录为 `02_项目代码/volunteer-frontend`）:
 
@@ -243,7 +243,7 @@ Run（工作目录为 `02_项目代码/volunteer-frontend`）:
 
 Expected: 全部 PASS。
 
-- [ ] **Step 5: 更新进度并提交**
+- [x] **Step 5: 更新进度并提交**
 
 ```text
 新增：实现收藏院校专业横向对比
