@@ -1,7 +1,11 @@
 package com.example.volunteer.service;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.volunteer.common.PageResult;
+import com.example.volunteer.dto.AdminStudentQuery;
 import com.example.volunteer.entity.AdmissionRecord;
 import com.example.volunteer.entity.Favorite;
 import com.example.volunteer.entity.Major;
@@ -14,21 +18,26 @@ import com.example.volunteer.mapper.UniversityMapper;
 import com.example.volunteer.mapper.UserMapper;
 import com.example.volunteer.service.impl.AdminStatisticsServiceImpl;
 import com.example.volunteer.vo.AdminStatisticsOverviewVO;
+import com.example.volunteer.vo.StudentVO;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class AdminStatisticsServiceImplTest {
@@ -137,6 +146,31 @@ class AdminStatisticsServiceImplTest {
         assertNull(result.admissionTrends().get(0).averageMinRank());
     }
 
+    @Test
+    void shouldQueryOnlyStudentsAndExcludePasswordHash() {
+        User student = student();
+        Page<User> userPage = new Page<>(1, 10);
+        userPage.setRecords(List.of(student));
+        userPage.setTotal(1);
+        when(userMapper.selectPage(any(), any())).thenReturn(userPage);
+        AdminStudentQuery query = new AdminStudentQuery();
+        query.setKeyword(" student ");
+
+        PageResult<StudentVO> result = service.pageStudents(query);
+
+        assertEquals(1, result.total());
+        assertEquals("student", result.records().get(0).username());
+        assertTrue(Arrays.stream(StudentVO.class.getRecordComponents())
+                .noneMatch(component -> component.getName().toLowerCase().contains("password")));
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Wrapper<User>> captor = ArgumentCaptor.forClass(Wrapper.class);
+        verify(userMapper).selectPage(any(), captor.capture());
+        String sql = captor.getValue().getSqlSegment();
+        assertTrue(sql.contains("role"));
+        assertTrue(sql.contains("username"));
+        assertTrue(sql.contains("nickname"));
+    }
+
     private University university(Long id, String name, String province, String level) {
         University university = new University();
         university.setId(id);
@@ -175,5 +209,21 @@ class AdminStatisticsServiceImplTest {
         favorite.setUserId(userId);
         favorite.setUniversityId(universityId);
         return favorite;
+    }
+
+    private User student() {
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("student");
+        user.setPasswordHash("secret-hash");
+        user.setNickname("示例学生");
+        user.setRole("STUDENT");
+        user.setProvince("山西");
+        user.setExamYear(2026);
+        user.setSubjectTrack("物理类");
+        user.setScore(560);
+        user.setProvinceRank(10000);
+        user.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        return user;
     }
 }

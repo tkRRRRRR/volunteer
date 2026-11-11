@@ -1,6 +1,9 @@
 package com.example.volunteer.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.volunteer.common.PageResult;
+import com.example.volunteer.dto.AdminStudentQuery;
 import com.example.volunteer.entity.AdmissionRecord;
 import com.example.volunteer.entity.Favorite;
 import com.example.volunteer.entity.Major;
@@ -17,6 +20,7 @@ import com.example.volunteer.vo.AdmissionYearTrendVO;
 import com.example.volunteer.vo.DataCompletenessVO;
 import com.example.volunteer.vo.FavoriteUniversityStatVO;
 import com.example.volunteer.vo.StatisticItemVO;
+import com.example.volunteer.vo.StudentVO;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -102,6 +106,30 @@ public class AdminStatisticsServiceImpl implements AdminStatisticsService {
                 buildAdmissionTrends(records),
                 buildFavoriteTop(favorites, universityById),
                 completeness
+        );
+    }
+
+    @Override
+    public PageResult<StudentVO> pageStudents(AdminStudentQuery query) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<User>()
+                .eq(User::getRole, "STUDENT");
+        if (StringUtils.hasText(query.getKeyword())) {
+            String keyword = query.getKeyword().trim();
+            wrapper.and(item -> item.like(User::getUsername, keyword)
+                    .or()
+                    .like(User::getNickname, keyword));
+        }
+        wrapper.orderByDesc(User::getCreatedAt)
+                .orderByDesc(User::getId);
+        Page<User> page = userMapper.selectPage(
+                new Page<>(query.getPage(), query.getSize()),
+                wrapper
+        );
+        return new PageResult<>(
+                page.getRecords().stream().map(StudentVO::from).toList(),
+                page.getTotal(),
+                page.getCurrent(),
+                page.getSize()
         );
     }
 
