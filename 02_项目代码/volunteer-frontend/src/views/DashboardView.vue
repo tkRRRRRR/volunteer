@@ -12,12 +12,12 @@ const profile = computed(() => auth.user || {})
   <div class="dashboard">
     <section class="welcome-card">
       <div class="welcome-copy">
-        <span class="welcome-kicker">今日志愿工作台</span>
-        <h2>{{ auth.displayName }}，先从你的成绩位次开始整理</h2>
-        <p>系统用最近三年录取记录生成可解释的冲稳保辅助结果，院校详情、收藏和对比信息会保留在同一账号下。</p>
+        <span class="welcome-kicker">开始整理志愿</span>
+        <h2>{{ auth.displayName }}，先把成绩和位次核对好</h2>
+        <p>先确认自己的省份、科类和位次，再结合近三年录取记录查看冲刺、稳妥和保底院校。收藏的院校和专业会统一保留在账号中。</p>
         <div class="welcome-actions">
           <el-button type="primary" size="large" @click="router.push('/recommendations')">
-            生成辅助结果
+            查看冲稳保推荐
           </el-button>
           <el-button size="large" @click="router.push('/universities')">查询院校</el-button>
         </div>
@@ -35,54 +35,54 @@ const profile = computed(() => auth.user || {})
 
     <section class="metric-grid">
       <article>
-        <span>参考年份</span>
-        <strong>近 3 年</strong>
-        <p>按考试年份向前取三年录取记录</p>
+        <span>参考数据</span>
+        <strong>近三年</strong>
+        <p>查看最近三年的最低分和最低位次</p>
       </article>
       <article>
-        <span>位次权重</span>
-        <strong>70%</strong>
-        <p>位次比单年分数更稳定</p>
+        <span>先看什么</span>
+        <strong>看位次</strong>
+        <p>不同年份分数变化较大，位次更方便比较</p>
       </article>
       <article>
-        <span>结果上限</span>
-        <strong>50 条</strong>
-        <p>控制页面信息量并便于比较</p>
+        <span>结果数量</span>
+        <strong>最多 50 条</strong>
+        <p>只保留匹配度较高的院校专业</p>
       </article>
       <article>
-        <span>数据口径</span>
-        <strong>可追溯</strong>
-        <p>每条结果展示数据来源</p>
+        <span>数据说明</span>
+        <strong>保留来源</strong>
+        <p>每条录取记录都标明数据来源</p>
       </article>
     </section>
 
     <section class="workflow">
       <div class="page-heading">
         <div>
-          <h2>建议使用顺序</h2>
-          <p>先核对个人条件，再查院校，最后整理冲稳保和收藏。</p>
+          <h2>可以按这个顺序使用</h2>
+          <p>先把自己的信息填准确，再筛选院校并做比较。</p>
         </div>
       </div>
       <div class="workflow-grid">
         <button @click="router.push('/profile')">
           <span>01</span>
-          <strong>核对个人档案</strong>
-          <small>确认省份、科类、分数和位次</small>
+          <strong>核对成绩与位次</strong>
+          <small>确认省份、科类、分数和全省位次</small>
         </button>
         <button @click="router.push('/universities')">
           <span>02</span>
-          <strong>检索院校专业</strong>
-          <small>按地区、层次和关键词筛选</small>
+          <strong>查找院校专业</strong>
+          <small>按地区、层次和专业方向查询</small>
         </button>
         <button @click="router.push('/recommendations')">
           <span>03</span>
-          <strong>整理冲稳保</strong>
-          <small>查看匹配分、依据和来源</small>
+          <strong>查看冲稳保</strong>
+          <small>了解推荐原因和近三年数据</small>
         </button>
         <button @click="router.push('/favorites')">
           <span>04</span>
-          <strong>收藏并复核</strong>
-          <small>用官方招生章程完成最终核验</small>
+          <strong>收藏后比较</strong>
+          <small>最终以学校招生章程和考试院信息为准</small>
         </button>
       </div>
     </section>

@@ -39,7 +39,7 @@ const save = async () => {
       <div class="page-heading">
         <div>
           <h2>个人档案</h2>
-          <p>这里的省份、科类、分数和位次会作为冲稳保筛选的默认条件。</p>
+          <p>填写后，冲稳保筛选会自动带入这里的信息。</p>
         </div>
       </div>
       <el-form ref="formRef" :model="form" :rules="rules" label-position="top">
@@ -79,11 +79,11 @@ const save = async () => {
     </section>
 
     <aside class="page-card profile-note">
-      <span class="note-kicker">填写提示</span>
-      <h3>位次比单年分数更适合横向比较</h3>
-      <p>不同年份的试题难度和分数线会变化，系统把位次作为主要指标，同时保留分数差异作为辅助信息。</p>
+      <span class="note-kicker">填写说明</span>
+      <h3>不同年份分数变化大，比较位次更稳妥</h3>
+      <p>题目难度和分数线每年都会变化，所以筛选时主要看位次，分数只作为补充。</p>
       <el-divider />
-      <p>最终填报前，请以省级招生考试机构和院校官网发布的最新招生章程为准。</p>
+      <p>最后填报前，请再核对省级考试院和学校官网发布的最新招生信息。</p>
     </aside>
   </div>
 </template>

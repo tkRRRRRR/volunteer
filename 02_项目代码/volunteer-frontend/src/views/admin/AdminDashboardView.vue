@@ -12,8 +12,8 @@ const errorMessage = ref('')
 const overview = ref(null)
 
 const metrics = computed(() => [
-  { label: '院校数据', value: overview.value?.universityCount || 0 },
-  { label: '专业数据', value: overview.value?.majorCount || 0 },
+  { label: '院校数量', value: overview.value?.universityCount || 0 },
+  { label: '专业数量', value: overview.value?.majorCount || 0 },
   { label: '录取记录', value: overview.value?.admissionRecordCount || 0 },
   { label: '学生账号', value: overview.value?.studentCount || 0 }
 ])
@@ -41,15 +41,15 @@ onMounted(load)
   <div v-loading="loading" class="admin-dashboard">
     <section class="admin-hero">
       <div>
-        <span class="hero-kicker">管理员工作台</span>
-        <h2>{{ auth.displayName }}，集中维护数据并检查系统完整度</h2>
-        <p>管理端只保留院校数据维护和数据统计。学生成绩、冲稳保筛选与收藏属于学生工作台，不再混入管理员导航。</p>
+        <span class="hero-kicker">管理概览</span>
+        <h2>{{ auth.displayName }}，院校和专业资料都在这里维护</h2>
+        <p>你可以维护院校、专业和录取记录，也可以查看数据数量、录取趋势和学生账号。学生端的成绩筛选和收藏不会出现在管理员菜单中。</p>
         <div class="hero-actions">
           <el-button type="primary" size="large" @click="router.push('/admin/statistics')">
-            打开数据统计
+            查看数据统计
           </el-button>
           <el-button size="large" @click="router.push('/admin/universities')">
-            维护院校数据
+            管理院校数据
           </el-button>
         </div>
       </div>
@@ -82,8 +82,8 @@ onMounted(load)
     <section class="admin-grid">
       <article class="admin-panel">
         <div class="panel-heading">
-          <h3>数据处理提醒</h3>
-          <p>优先补齐会影响学生查询和推荐的缺失数据。</p>
+          <h3>资料待补充</h3>
+          <p>这些资料缺失时，学生查询和筛选结果会不完整。</p>
         </div>
         <div class="health-list">
           <div v-for="item in completenessItems" :key="item.label">
@@ -95,20 +95,20 @@ onMounted(load)
 
       <article class="admin-panel">
         <div class="panel-heading">
-          <h3>常用操作</h3>
-          <p>进入对应模块完成日常维护。</p>
+          <h3>快捷入口</h3>
+          <p>从这里进入平时常用的两个页面。</p>
         </div>
         <button class="action-row" @click="router.push('/admin/universities')">
           <div>
-            <strong>维护院校、专业与录取记录</strong>
-            <small>新增、编辑、删除和批量导入</small>
+            <strong>管理院校、专业与录取记录</strong>
+            <small>可以新增、修改、删除或批量导入</small>
           </div>
           <span>进入</span>
         </button>
         <button class="action-row" @click="router.push('/admin/statistics')">
           <div>
-            <strong>查看统计与学生账号</strong>
-            <small>分布、趋势、排行和完整度</small>
+            <strong>查看数据统计和学生账号</strong>
+            <small>了解数据分布、录取趋势和资料缺失情况</small>
           </div>
           <span>查看</span>
         </button>

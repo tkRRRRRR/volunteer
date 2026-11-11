@@ -23,9 +23,9 @@ const router = createRouter({
       path: '/',
       component: AppLayout,
       children: [
-        { path: '', name: 'dashboard', component: DashboardEntryView, meta: { title: '工作台概览' } },
+        { path: '', name: 'dashboard', component: DashboardEntryView, meta: { title: '首页' } },
         { path: 'universities', name: 'universities', component: UniversityListView, meta: { roles: ['STUDENT'], title: '院校查询' } },
-        { path: 'recommendations', name: 'recommendations', component: RecommendationView, meta: { roles: ['STUDENT'], title: '冲稳保辅助筛选' } },
+        { path: 'recommendations', name: 'recommendations', component: RecommendationView, meta: { roles: ['STUDENT'], title: '冲稳保筛选' } },
         { path: 'favorites', name: 'favorites', component: FavoriteView, meta: { roles: ['STUDENT'], title: '我的收藏' } },
         { path: 'profile', name: 'profile', component: ProfileView, meta: { roles: ['STUDENT'], title: '个人档案' } },
         {

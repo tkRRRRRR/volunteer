@@ -111,7 +111,7 @@ onMounted(load)
     <div class="page-heading">
       <div>
         <h2>院校数据维护</h2>
-        <p>维护院校基础信息，并进入数据维护抽屉管理专业和历年录取记录。</p>
+        <p>在这里管理院校信息、专业和历年录取记录。</p>
       </div>
       <el-button type="primary" @click="openCreate">新增院校</el-button>
     </div>

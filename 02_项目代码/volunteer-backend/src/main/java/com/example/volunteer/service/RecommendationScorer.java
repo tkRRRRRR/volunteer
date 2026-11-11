@@ -45,7 +45,7 @@ public final class RecommendationScorer {
                 : "你的位次低于近三年平均最低位次 " + Math.abs(rankDifference) + " 名";
         String reason = String.format(
                 Locale.ROOT,
-                "%s，分数与平均最低分相差 %+d 分；按位次为主、分数为辅计算匹配分。",
+                "%s，分数与平均最低分相差 %+d 分。筛选时主要看位次，分数作为补充。",
                 rankDescription,
                 userScore - averageMinScore
         );

@@ -27,8 +27,8 @@ const studentQuery = reactive({
 })
 
 const metrics = computed(() => [
-  { label: '院校数据', value: overview.value?.universityCount || 0, tone: 'blue' },
-  { label: '专业数据', value: overview.value?.majorCount || 0, tone: 'cyan' },
+  { label: '院校数量', value: overview.value?.universityCount || 0, tone: 'blue' },
+  { label: '专业数量', value: overview.value?.majorCount || 0, tone: 'cyan' },
   { label: '录取记录', value: overview.value?.admissionRecordCount || 0, tone: 'gold' },
   { label: '学生账号', value: overview.value?.studentCount || 0, tone: 'green' },
   { label: '收藏记录', value: overview.value?.favoriteCount || 0, tone: 'rose' }
@@ -132,7 +132,7 @@ onBeforeUnmount(() => {
     <div class="page-heading">
       <div>
         <h2>数据统计与学生账号</h2>
-        <p>查看院校数据规模、录取趋势、收藏热度和数据完整情况。</p>
+        <p>查看院校、专业和录取数据的数量，以及学生的收藏情况。</p>
       </div>
       <el-button @click="refreshAll">刷新数据</el-button>
     </div>
@@ -165,7 +165,7 @@ onBeforeUnmount(() => {
         <div class="panel-heading">
           <div>
             <h3>院校层次分布</h3>
-            <p>按院校层次统计当前数据量</p>
+            <p>看看双一流、省重点院校各有多少</p>
           </div>
         </div>
         <div ref="levelChartRef" class="chart-box" />
@@ -174,7 +174,7 @@ onBeforeUnmount(() => {
         <div class="panel-heading">
           <div>
             <h3>院校地区分布</h3>
-            <p>按院校所在省份统计当前数据量</p>
+            <p>看看院校主要分布在哪些省份</p>
           </div>
         </div>
         <div ref="provinceChartRef" class="chart-box" />
@@ -195,8 +195,8 @@ onBeforeUnmount(() => {
       <article class="panel">
         <div class="panel-heading">
           <div>
-            <h3>收藏院校 Top 5</h3>
-            <p>按当前学生收藏记录聚合</p>
+            <h3>收藏最多的 5 所院校</h3>
+            <p>学生收藏较多的院校</p>
           </div>
         </div>
         <el-table
@@ -213,8 +213,8 @@ onBeforeUnmount(() => {
       <article class="panel">
         <div class="panel-heading">
           <div>
-            <h3>数据完整度</h3>
-            <p>提示需要继续补充的数据</p>
+            <h3>资料完整情况</h3>
+            <p>还有哪些资料需要补齐</p>
           </div>
         </div>
         <div class="completeness-list">
@@ -240,7 +240,7 @@ onBeforeUnmount(() => {
       <div class="panel-heading student-heading">
         <div>
           <h3>学生账号</h3>
-          <p>仅展示非敏感档案字段，不包含密码哈希。</p>
+          <p>这里只显示学生填写的基本档案。</p>
         </div>
         <div class="student-filter">
           <el-input

@@ -93,8 +93,8 @@ onBeforeUnmount(() => {
     <section class="page-card filter-card">
       <div class="page-heading">
         <div>
-          <h2>冲稳保辅助筛选</h2>
-          <p>匹配分由位次差异和分数差异构成，等级用于整理资料，不代表录取概率。</p>
+          <h2>冲稳保筛选</h2>
+          <p>根据位次和分数的差距，把院校专业分成冲刺、稳妥和保底。结果只用于整理资料，不代表录取概率。</p>
         </div>
       </div>
 
@@ -119,31 +119,55 @@ onBeforeUnmount(() => {
         <el-form-item label="意向省份">
           <el-select v-model="form.preferredProvince" clearable placeholder="不限">
             <el-option label="山西" value="山西" />
+            <el-option label="北京" value="北京" />
+            <el-option label="天津" value="天津" />
+            <el-option label="辽宁" value="辽宁" />
+            <el-option label="吉林" value="吉林" />
+            <el-option label="黑龙江" value="黑龙江" />
+            <el-option label="上海" value="上海" />
             <el-option label="江苏" value="江苏" />
-            <el-option label="陕西" value="陕西" />
+            <el-option label="浙江" value="浙江" />
+            <el-option label="安徽" value="安徽" />
+            <el-option label="福建" value="福建" />
             <el-option label="山东" value="山东" />
             <el-option label="河南" value="河南" />
+            <el-option label="湖北" value="湖北" />
+            <el-option label="湖南" value="湖南" />
+            <el-option label="广东" value="广东" />
+            <el-option label="四川" value="四川" />
+            <el-option label="重庆" value="重庆" />
+            <el-option label="陕西" value="陕西" />
+            <el-option label="甘肃" value="甘肃" />
+            <el-option label="新疆" value="新疆" />
+            <el-option label="内蒙古" value="内蒙古" />
+            <el-option label="江西" value="江西" />
+            <el-option label="广西" value="广西" />
+            <el-option label="云南" value="云南" />
+            <el-option label="贵州" value="贵州" />
+            <el-option label="海南" value="海南" />
           </el-select>
         </el-form-item>
         <el-form-item label="院校层次">
           <el-select v-model="form.universityLevel" clearable placeholder="不限">
-            <el-option label="本科" value="本科" />
+            <el-option label="双一流" value="双一流" />
+            <el-option label="省重点" value="省重点" />
+            <el-option label="普通本科" value="普通本科" />
           </el-select>
         </el-form-item>
         <el-form-item label="专业关键词" class="keyword-field">
           <el-input v-model="form.keyword" clearable placeholder="例如：软件工程" />
         </el-form-item>
-        <el-button type="primary" class="submit-button" :loading="loading" @click="submit">生成辅助结果</el-button>
+        <el-button type="primary" class="submit-button" :loading="loading" @click="submit">开始筛选</el-button>
       </el-form>
     </section>
 
     <section class="page-card result-card">
       <div class="result-head">
         <div>
-          <span class="result-kicker">MATCH OVERVIEW</span>
-          <h2>结果概览</h2>
+          <span class="result-kicker">本次筛选</span>
+          <h2>结果分布</h2>
         </div>
-        <div class="result-count"><strong>{{ results.length }}</strong><span>条参考结果</span></div>
+        <div class="result-count"><strong>{{ results.length }}</strong><span>条结果</span></div>
       </div>
       <div ref="chartRef" class="chart"></div>
     </section>
@@ -151,8 +175,8 @@ onBeforeUnmount(() => {
     <section class="page-card table-card">
       <div class="page-heading">
         <div>
-          <h2>匹配明细</h2>
-          <p>按匹配分从高到低排序，点击收藏后可到“我的收藏”集中比较。</p>
+          <h2>筛选结果</h2>
+          <p>按参考分从高到低排列，收藏后可以到“我的收藏”继续比较。</p>
         </div>
       </div>
       <el-table v-loading="loading" :data="results" stripe height="520">
@@ -164,7 +188,7 @@ onBeforeUnmount(() => {
         <el-table-column prop="latestYear" label="最近年份" width="90" align="center" />
         <el-table-column prop="averageMinScore" label="平均最低分" width="110" align="center" />
         <el-table-column prop="averageMinRank" label="平均最低位次" width="120" align="center" />
-        <el-table-column label="匹配分" width="100" align="center">
+        <el-table-column label="参考分" width="100" align="center">
           <template #default="{ row }"><strong class="match-score">{{ row.matchScore }}</strong></template>
         </el-table-column>
         <el-table-column label="等级" width="90" align="center">
@@ -172,7 +196,7 @@ onBeforeUnmount(() => {
             <el-tag :class="levelClass(row.matchLevel)" effect="plain">{{ row.matchLevel }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="reason" label="匹配依据" min-width="300" show-overflow-tooltip />
+        <el-table-column prop="reason" label="判断依据" min-width="300" show-overflow-tooltip />
         <el-table-column prop="source" label="数据来源" min-width="150" show-overflow-tooltip />
         <el-table-column label="操作" width="80" fixed="right">
           <template #default="{ row }"><el-button link type="primary" @click="favorite(row)">收藏</el-button></template>

@@ -107,22 +107,46 @@ onBeforeUnmount(() => {
     <div class="page-heading">
       <div>
         <h2>院校查询</h2>
-        <p>演示数据中的院校名称均为虚构，页面结构用于展示实际业务的查询与详情功能。</p>
+        <p>院校名称来自公开院校信息，录取分数和位次为本系统生成的演示数据。</p>
       </div>
-      <el-tag type="warning" effect="plain">演示数据</el-tag>
+      <el-tag type="warning" effect="plain">演示录取数据</el-tag>
     </div>
 
     <div class="filter-row">
       <el-input v-model="query.keyword" clearable placeholder="院校名称、标签或专业方向" style="width: 260px" @keyup.enter="load" />
       <el-select v-model="query.province" clearable placeholder="所在省份" style="width: 150px">
         <el-option label="山西" value="山西" />
+        <el-option label="北京" value="北京" />
+        <el-option label="天津" value="天津" />
+        <el-option label="辽宁" value="辽宁" />
+        <el-option label="吉林" value="吉林" />
+        <el-option label="黑龙江" value="黑龙江" />
+        <el-option label="上海" value="上海" />
         <el-option label="江苏" value="江苏" />
-        <el-option label="陕西" value="陕西" />
+        <el-option label="浙江" value="浙江" />
+        <el-option label="安徽" value="安徽" />
+        <el-option label="福建" value="福建" />
         <el-option label="山东" value="山东" />
         <el-option label="河南" value="河南" />
+        <el-option label="湖北" value="湖北" />
+        <el-option label="湖南" value="湖南" />
+        <el-option label="广东" value="广东" />
+        <el-option label="四川" value="四川" />
+        <el-option label="重庆" value="重庆" />
+        <el-option label="陕西" value="陕西" />
+        <el-option label="甘肃" value="甘肃" />
+        <el-option label="新疆" value="新疆" />
+        <el-option label="内蒙古" value="内蒙古" />
+        <el-option label="江西" value="江西" />
+        <el-option label="广西" value="广西" />
+        <el-option label="云南" value="云南" />
+        <el-option label="贵州" value="贵州" />
+        <el-option label="海南" value="海南" />
       </el-select>
       <el-select v-model="query.level" clearable placeholder="院校层次" style="width: 150px">
-        <el-option label="本科" value="本科" />
+        <el-option label="双一流" value="双一流" />
+        <el-option label="省重点" value="省重点" />
+        <el-option label="普通本科" value="普通本科" />
       </el-select>
       <el-button type="primary" @click="query.page = 1; load()">查询</el-button>
       <el-button @click="reset">重置</el-button>
@@ -215,7 +239,7 @@ onBeforeUnmount(() => {
 
         <el-alert
           class="detail-alert"
-          title="该页面为演示院校，不能作为真实招生信息使用。"
+          title="页面中的分数和位次为演示数据，请以学校官网和省级考试院公布的信息为准。"
           type="warning"
           :closable="false"
           show-icon

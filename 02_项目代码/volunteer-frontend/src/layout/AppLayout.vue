@@ -20,10 +20,10 @@ const auth = useAuthStore()
 
 const activeMenu = computed(() => route.path)
 const pageTitle = computed(() => {
-  if (route.meta.title === '工作台概览' && auth.isAdmin) {
+  if (route.name === 'dashboard' && auth.isAdmin) {
     return '管理概览'
   }
-  return route.meta.title || '志愿填报辅助系统'
+  return route.meta.title || '高考志愿资料整理'
 })
 const navigationSections = computed(() =>
   getNavigationSections(auth.user?.role)
@@ -51,7 +51,7 @@ const logout = () => {
         <div class="brand-mark">志</div>
         <div>
           <strong>志愿导航</strong>
-          <span>录取数据辅助筛选</span>
+          <span>查院校 · 看数据 · 做比较</span>
         </div>
       </div>
 
@@ -88,7 +88,7 @@ const logout = () => {
           <h1>{{ pageTitle }}</h1>
         </div>
         <div class="topbar-note">
-          历史数据仅作辅助参考，不构成录取承诺
+          演示数据仅供功能展示，请以官方招生信息为准
         </div>
       </header>
       <section class="page-content">

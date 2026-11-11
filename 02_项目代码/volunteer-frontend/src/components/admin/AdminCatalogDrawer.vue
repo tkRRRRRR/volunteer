@@ -51,7 +51,7 @@ const handleMajorChanged = () => {
 
     <div v-if="university" class="catalog-body">
       <div class="context-note">
-        专业和录取记录只在本院校范围内维护。录取记录必须选择当前院校下的具体专业。
+        下面的专业和录取记录都属于当前院校。新增录取记录时，请选择本院校已有的专业。
       </div>
       <el-tabs v-model="activeTab">
         <el-tab-pane label="专业维护" name="majors">

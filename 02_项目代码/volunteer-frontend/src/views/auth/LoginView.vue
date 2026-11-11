@@ -67,15 +67,15 @@ const submitRegister = async () => {
   <div class="auth-page">
     <section class="auth-intro">
       <div class="intro-badge">本科毕业设计系统</div>
-      <h1>把分数、位次和历年录取数据放在同一张视图里</h1>
+      <h1>先看位次，再整理适合自己的院校</h1>
       <p>
-        系统用位次为主、分数为辅的可解释规则，整理冲刺、稳妥、保底院校，
-        帮助你完成资料查询、志愿比较与收藏管理。
+        输入成绩、位次和选科，结合近三年录取数据查看冲刺、稳妥和保底院校，
+        把感兴趣的院校专业收藏起来慢慢比较。
       </p>
       <div class="intro-points">
-        <div><span>01</span><strong>历史数据可追溯</strong><small>每条结果保留年份与来源</small></div>
-        <div><span>02</span><strong>匹配过程可解释</strong><small>展示平均最低分与位次差异</small></div>
-        <div><span>03</span><strong>辅助结果不承诺</strong><small>最终填报仍需核对官方政策</small></div>
+        <div><span>01</span><strong>历年数据一起看</strong><small>查看最近三年的分数和位次</small></div>
+        <div><span>02</span><strong>推荐理由写清楚</strong><small>能看到分数、位次和判断依据</small></div>
+        <div><span>03</span><strong>填报前再核对</strong><small>最终以考试院和学校信息为准</small></div>
       </div>
       <div class="demo-note">
         演示学生：student / student123<br />
@@ -88,7 +88,7 @@ const submitRegister = async () => {
         <div class="mini-logo">志</div>
         <div>
           <strong>志愿导航</strong>
-          <span>高考志愿填报辅助系统</span>
+          <span>高考志愿资料整理</span>
         </div>
       </div>
 
