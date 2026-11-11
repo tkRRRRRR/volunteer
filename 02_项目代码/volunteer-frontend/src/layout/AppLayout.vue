@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   DataBoard,
+  DataAnalysis,
   School,
   Setting,
   Star,
@@ -59,6 +60,10 @@ const logout = () => {
         <el-menu-item v-if="auth.isAdmin" index="/admin/universities">
           <el-icon><Setting /></el-icon>
           <span>院校维护</span>
+        </el-menu-item>
+        <el-menu-item v-if="auth.isAdmin" index="/admin/statistics">
+          <el-icon><DataAnalysis /></el-icon>
+          <span>数据统计</span>
         </el-menu-item>
       </el-menu>
 

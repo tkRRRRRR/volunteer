@@ -8,6 +8,7 @@ import RecommendationView from '../views/recommend/RecommendationView.vue'
 import FavoriteView from '../views/user/FavoriteView.vue'
 import ProfileView from '../views/user/ProfileView.vue'
 import AdminUniversityView from '../views/admin/AdminUniversityView.vue'
+import AdminStatisticsView from '../views/admin/AdminStatisticsView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -32,6 +33,12 @@ const router = createRouter({
           name: 'admin-universities',
           component: AdminUniversityView,
           meta: { roles: ['ADMIN'], title: '院校数据维护' }
+        },
+        {
+          path: 'admin/statistics',
+          name: 'admin-statistics',
+          component: AdminStatisticsView,
+          meta: { roles: ['ADMIN'], title: '数据统计' }
         }
       ]
     },
