@@ -41,4 +41,44 @@ class RecommendationScorerTest {
                 () -> RecommendationScorer.score(560, 0, 550, 10000)
         );
     }
+
+    @Test
+    void shouldSupportRankOnlyFiltering() {
+        RecommendationScorer.Result result =
+                RecommendationScorer.score(null, 10000, 550, 10000);
+
+        assertEquals("冲刺", result.matchLevel());
+        assertTrue(result.reason().contains("本次只按位次筛选"));
+    }
+
+    @Test
+    void shouldSupportScoreOnlyFiltering() {
+        RecommendationScorer.Result result =
+                RecommendationScorer.score(550, null, 550, 10000);
+
+        assertEquals("冲刺", result.matchLevel());
+        assertTrue(result.reason().contains("本次只按分数筛选"));
+    }
+
+    @Test
+    void shouldRejectRequestWithoutScoreAndRank() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> RecommendationScorer.score(null, null, 550, 10000)
+        );
+    }
+
+    @Test
+    void scoreOnlyShouldUseScoreSpecificLevelRanges() {
+        RecommendationScorer.Result difficult =
+                RecommendationScorer.score(560, null, 580, 10000);
+        RecommendationScorer.Result different =
+                RecommendationScorer.score(560, null, 540, 10000);
+        RecommendationScorer.Result safe =
+                RecommendationScorer.score(560, null, 510, 10000);
+
+        assertEquals("不建议", difficult.matchLevel());
+        assertEquals("稳妥", different.matchLevel());
+        assertEquals("保底", safe.matchLevel());
+    }
 }

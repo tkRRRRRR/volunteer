@@ -1,14 +1,20 @@
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import * as echarts from 'echarts'
 import { useAuthStore } from '../../stores/auth'
 import { createRecommendation } from '../../api/recommendation'
 import { addFavorite } from '../../api/favorite'
+import {
+  buildEmptyRecommendationOption,
+  buildRecommendationPayload
+} from '../../utils/recommendationForm'
 
 const auth = useAuthStore()
 const loading = ref(false)
 const results = ref([])
+const hasQueried = ref(false)
+const emptyMessage = ref('设置条件后点击“开始筛选”')
 const chartRef = ref()
 let chart
 
@@ -17,6 +23,7 @@ const form = reactive({
   province: auth.user?.province || '山西',
   examYear: auth.user?.examYear || 2026,
   subjectTrack: auth.user?.subjectTrack || '物理类',
+  queryMode: 'rank',
   score: auth.user?.score || 560,
   provinceRank: auth.user?.provinceRank || 10000,
   preferredProvince: '',
@@ -35,6 +42,10 @@ const renderChart = async () => {
   await nextTick()
   if (!chartRef.value) return
   chart ||= echarts.init(chartRef.value)
+  if (!hasQueried.value || !results.value.length) {
+    chart.setOption(buildEmptyRecommendationOption(emptyMessage.value), true)
+    return
+  }
   // 按四类匹配等级统计数量，直观展示本次筛选结果分布。
   const counts = ['保底', '稳妥', '冲刺', '不建议'].map((level) => ({
     name: level,
@@ -59,9 +70,13 @@ const renderChart = async () => {
 const submit = async () => {
   loading.value = true
   try {
-    results.value = await createRecommendation(form)
+    results.value = await createRecommendation(buildRecommendationPayload(form))
+    hasQueried.value = true
     if (!results.value.length) {
+      emptyMessage.value = '没有符合当前条件的院校专业，请调整条件'
       ElMessage.warning('当前条件下没有匹配记录，请调整筛选条件')
+    } else {
+      emptyMessage.value = ''
     }
     renderChart()
   } finally {
@@ -78,8 +93,20 @@ const resize = () => chart?.resize()
 
 onMounted(() => {
   window.addEventListener('resize', resize)
-  submit()
+  renderChart()
 })
+
+watch(
+  form,
+  () => {
+    // 条件一旦变化，旧结果就不再对应当前条件，必须立即清空。
+    results.value = []
+    hasQueried.value = false
+    emptyMessage.value = '条件已改变，请重新筛选'
+    renderChart()
+  },
+  { deep: true }
+)
 
 onBeforeUnmount(() => {
   // 离开页面时释放图表和窗口监听，避免重复初始化与内存泄漏。
@@ -94,7 +121,7 @@ onBeforeUnmount(() => {
       <div class="page-heading">
         <div>
           <h2>冲稳保筛选</h2>
-          <p>根据位次和分数的差距，把院校专业分成冲刺、稳妥和保底。结果只用于整理资料，不代表录取概率。</p>
+          <p>选择按位次或按分数筛选，把院校专业分成冲刺、稳妥和保底。结果只用于整理资料，不代表录取概率。</p>
         </div>
       </div>
 
@@ -110,10 +137,16 @@ onBeforeUnmount(() => {
             <el-option label="历史类" value="历史类" />
           </el-select>
         </el-form-item>
-        <el-form-item label="高考分数">
+        <el-form-item label="筛选依据" class="mode-field">
+          <el-radio-group v-model="form.queryMode">
+            <el-radio-button value="rank">按全省位次</el-radio-button>
+            <el-radio-button value="score">按高考分数</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item v-if="form.queryMode === 'score'" label="高考分数">
           <el-input-number v-model="form.score" :min="0" :max="750" controls-position="right" />
         </el-form-item>
-        <el-form-item label="全省位次">
+        <el-form-item v-else label="全省位次">
           <el-input-number v-model="form.provinceRank" :min="1" controls-position="right" />
         </el-form-item>
         <el-form-item label="意向省份">
@@ -167,7 +200,7 @@ onBeforeUnmount(() => {
           <span class="result-kicker">本次筛选</span>
           <h2>结果分布</h2>
         </div>
-        <div class="result-count"><strong>{{ results.length }}</strong><span>条结果</span></div>
+        <div class="result-count"><strong>{{ hasQueried ? results.length : 0 }}</strong><span>条结果</span></div>
       </div>
       <div ref="chartRef" class="chart"></div>
     </section>
@@ -176,10 +209,16 @@ onBeforeUnmount(() => {
       <div class="page-heading">
         <div>
           <h2>筛选结果</h2>
-          <p>按参考分从高到低排列，收藏后可以到“我的收藏”继续比较。</p>
+          <p>按冲刺、稳妥、保底分组，组内按参考分从高到低排列。</p>
         </div>
       </div>
-      <el-table v-loading="loading" :data="results" stripe height="520">
+      <el-table
+        v-loading="loading"
+        :data="results"
+        stripe
+        height="520"
+        :empty-text="hasQueried ? '没有符合当前条件的院校专业' : '请先设置筛选条件并开始筛选'"
+      >
         <el-table-column prop="universityName" label="院校" min-width="150" fixed />
         <el-table-column prop="majorName" label="专业" min-width="160" />
         <el-table-column label="地区" width="110">
@@ -231,6 +270,10 @@ onBeforeUnmount(() => {
 }
 
 .keyword-field {
+  grid-column: span 2;
+}
+
+.mode-field {
   grid-column: span 2;
 }
 

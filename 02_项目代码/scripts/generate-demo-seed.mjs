@@ -76,7 +76,13 @@ const universities = [
   ['海南大学', '海南', '海口', '双一流', '综合', 2],
   ['福建师范大学', '福建', '福州', '省重点', '师范', 3],
   ['山东科技大学', '山东', '青岛', '省重点', '理工', 3],
-  ['河南工业大学', '河南', '郑州', '省重点', '理工', 3]
+  ['河南工业大学', '河南', '郑州', '省重点', '理工', 3],
+  ['山西应用科技学院', '山西', '太原', '普通本科', '综合', 4],
+  ['黄河科技学院', '河南', '郑州', '普通本科', '理工', 4],
+  ['西安欧亚学院', '陕西', '西安', '普通本科', '财经', 4],
+  ['三亚学院', '海南', '三亚', '普通本科', '综合', 4],
+  ['武昌首义学院', '湖北', '武汉', '普通本科', '理工', 4],
+  ['郑州工商学院', '河南', '郑州', '普通本科', '财经', 4]
 ]
 
 const majorSets = {
@@ -157,12 +163,14 @@ universities.forEach(([, , , , type, tier], universityIndex) => {
       `(${currentMajorId}, ${universityId}, ${sql(majorName)}, ${sql(category)}, ${sql(requirement)}, ${sql(`用于系统演示的${majorName}专业条目。`)})`
     )
 
-    const baseScore = tier === 1 ? 620 : tier === 2 ? 575 : 510
+    const baseScore = tier === 1 ? 620 : tier === 2 ? 550 : tier === 3 ? 525 : 500
     const baseRank = tier === 1
       ? 5000
       : tier === 2
         ? 12000 + (universityIndex % 5) * 1500
-        : 35000 + (universityIndex % 4) * 3000
+        : tier === 3
+          ? 25000 + (universityIndex % 4) * 2000
+          : 40000 + (universityIndex % 3) * 2500
     for (let yearOffset = 0; yearOffset < 3; yearOffset++) {
       const year = 2023 + yearOffset
       const minScore = baseScore + (universityIndex % 5) * 3 + yearOffset * 4 + majorIndex * 2
@@ -171,6 +179,13 @@ universities.forEach(([, , , , type, tier], universityIndex) => {
       admissionRows.push(
         `(${universityId}, ${currentMajorId}, '山西', ${year}, '物理类', '本科批', ${minScore}, ${minRank}, ${planCount}, ${sql(source)}, '2026-10-15 09:00:00')`
       )
+      if (requirement.includes('或历史')) {
+        const historyScore = minScore - 6
+        const historyRank = minRank
+        admissionRows.push(
+          `(${universityId}, ${currentMajorId}, '山西', ${year}, '历史类', '本科批', ${historyScore}, ${historyRank}, ${Math.max(12, planCount - 6)}, ${sql(source)}, '2026-10-15 09:00:00')`
+        )
+      }
     }
   })
 })

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.AssertTrue;
 import lombok.Data;
 
 import java.util.Objects;
@@ -21,18 +22,21 @@ public class RecommendationRequest {
     @NotBlank(message = "请选择科类或选科组合")
     private String subjectTrack;
 
-    @NotNull(message = "请输入高考分数")
     @Min(value = 0, message = "分数不能小于0")
     @Max(value = 750, message = "分数不能大于750")
     private Integer score;
 
-    @NotNull(message = "请输入全省位次")
     @Min(value = 1, message = "位次必须大于0")
     private Integer provinceRank;
 
     private String preferredProvince;
     private String universityLevel;
     private String keyword;
+
+    @AssertTrue(message = "请填写高考分数或全省位次")
+    public boolean isScoreOrRankPresent() {
+        return score != null || provinceRank != null;
+    }
 
     public String cacheKey() {
         return String.join(":",
