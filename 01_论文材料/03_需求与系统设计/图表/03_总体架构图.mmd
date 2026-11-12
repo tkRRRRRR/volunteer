@@ -1,0 +1,34 @@
+flowchart LR
+    Browser["浏览器"]
+
+    subgraph Frontend["Vue 3 前端"]
+        UI["Element Plus 页面"]
+        Router["Vue Router"]
+        Store["Pinia 状态"]
+        Charts["ECharts 图表"]
+        Request["Axios 请求封装"]
+    end
+
+    subgraph Backend["Spring Boot 3 后端"]
+        Controller["Controller 接口层"]
+        Service["Service 业务层"]
+        Mapper["MyBatis-Plus Mapper"]
+        Security["JWT 与角色拦截"]
+    end
+
+    subgraph Data["数据支撑"]
+        MySQL["MySQL 8"]
+        Redis["Redis 缓存"]
+    end
+
+    Browser --> UI
+    UI --> Router
+    UI --> Store
+    UI --> Charts
+    UI --> Request
+    Request -->|HTTP JSON| Security
+    Security --> Controller
+    Controller --> Service
+    Service --> Mapper
+    Mapper --> MySQL
+    Service --> Redis

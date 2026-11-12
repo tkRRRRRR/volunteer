@@ -1,0 +1,37 @@
+flowchart LR
+    Student["学生"]
+    Admin["管理员"]
+
+    subgraph StudentUseCases["学生端"]
+        S1["注册登录"]
+        S2["维护个人档案"]
+        S3["查询院校与专业"]
+        S4["查看录取趋势"]
+        S5["冲稳保筛选"]
+        S6["收藏与横向对比"]
+    end
+
+    subgraph AdminUseCases["管理端"]
+        A1["管理员登录"]
+        A2["院校维护"]
+        A3["专业维护"]
+        A4["录取记录维护"]
+        A5["CSV/Excel 批量导入"]
+        A6["查看数据统计"]
+        A7["查看学生账号"]
+    end
+
+    Student --> S1
+    Student --> S2
+    Student --> S3
+    Student --> S4
+    Student --> S5
+    Student --> S6
+
+    Admin --> A1
+    Admin --> A2
+    Admin --> A3
+    Admin --> A4
+    Admin --> A5
+    Admin --> A6
+    Admin --> A7

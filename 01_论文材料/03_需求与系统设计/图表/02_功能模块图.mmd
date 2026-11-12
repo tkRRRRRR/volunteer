@@ -1,0 +1,35 @@
+flowchart TB
+    System["高考志愿填报辅助系统"]
+
+    Auth["认证与权限"]
+    Student["学生功能"]
+    Admin["管理功能"]
+    Support["公共支撑"]
+
+    System --> Auth
+    System --> Student
+    System --> Admin
+    System --> Support
+
+    Auth --> Auth1["注册登录"]
+    Auth --> Auth2["JWT 鉴权"]
+    Auth --> Auth3["角色校验"]
+
+    Student --> Student1["个人档案"]
+    Student --> Student2["院校与专业查询"]
+    Student --> Student3["录取趋势"]
+    Student --> Student4["位次/分数筛选"]
+    Student --> Student5["收藏与对比"]
+
+    Admin --> Admin1["院校维护"]
+    Admin --> Admin2["专业维护"]
+    Admin --> Admin3["录取记录维护"]
+    Admin --> Admin4["CSV/Excel 导入"]
+    Admin --> Admin5["数据统计"]
+    Admin --> Admin6["学生账号"]
+
+    Support --> Support1["统一响应"]
+    Support --> Support2["异常处理"]
+    Support --> Support3["Redis 缓存"]
+    Support --> Support4["OpenAPI 文档"]
+    Support --> Support5["自动化测试"]

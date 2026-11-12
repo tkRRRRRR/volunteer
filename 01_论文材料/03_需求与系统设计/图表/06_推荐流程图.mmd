@@ -1,0 +1,32 @@
+flowchart TD
+    Input["考试省份、年份、科类"]
+    Select{"筛选依据"}
+    RankInput["全省位次"]
+    ScoreInput["高考分数"]
+    Data["查询近三年录取记录"]
+    Group["按院校专业聚合"]
+    Average["计算平均最低分和平均最低位次"]
+    Score["计算参考分"]
+    RankOnly["只比较位次"]
+    ScoreOnly["只比较分数"]
+    Level["划分冲刺、稳妥、保底"]
+    Balance["按类别保留代表结果"]
+    Sort["按类别和参考分排序"]
+    Result["返回最多 50 条结果"]
+
+    Input --> Select
+    Select -->|按位次| RankInput
+    Select -->|按分数| ScoreInput
+    RankInput --> Data
+    ScoreInput --> Data
+    Data --> Group
+    Group --> Average
+    Average --> Score
+    RankInput --> RankOnly
+    ScoreInput --> ScoreOnly
+    RankOnly --> Score
+    ScoreOnly --> Score
+    Score --> Level
+    Level --> Balance
+    Balance --> Sort
+    Sort --> Result

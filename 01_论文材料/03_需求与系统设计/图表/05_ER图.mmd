@@ -1,0 +1,63 @@
+erDiagram
+    SYS_USER ||--o{ FAVORITE : "创建"
+    UNIVERSITY ||--o{ MAJOR : "开设"
+    UNIVERSITY ||--o{ ADMISSION_RECORD : "拥有"
+    MAJOR ||--o{ ADMISSION_RECORD : "对应"
+    UNIVERSITY ||--o{ FAVORITE : "被收藏"
+    MAJOR ||--o{ FAVORITE : "被收藏"
+
+    SYS_USER {
+        bigint id PK
+        varchar username UK
+        varchar password_hash
+        varchar nickname
+        varchar role
+        varchar province
+        int exam_year
+        varchar subject_track
+        int score
+        int province_rank
+    }
+
+    UNIVERSITY {
+        bigint id PK
+        varchar name
+        varchar province
+        varchar city
+        varchar level
+        varchar type
+        text description
+        varchar website
+        varchar tags
+    }
+
+    MAJOR {
+        bigint id PK
+        bigint university_id FK
+        varchar name
+        varchar category
+        varchar subject_requirement
+        text description
+    }
+
+    ADMISSION_RECORD {
+        bigint id PK
+        bigint university_id FK
+        bigint major_id FK
+        varchar province
+        int year
+        varchar subject_track
+        varchar batch
+        int min_score
+        int min_rank
+        int plan_count
+        varchar source
+    }
+
+    FAVORITE {
+        bigint id PK
+        bigint user_id FK
+        bigint university_id FK
+        bigint major_id FK
+        datetime created_at
+    }

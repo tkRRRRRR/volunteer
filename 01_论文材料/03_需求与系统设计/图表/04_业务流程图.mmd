@@ -1,0 +1,30 @@
+flowchart TD
+    Start(["进入系统"])
+    Login["登录或注册"]
+    Profile["填写省份、科类、分数和位次"]
+    Mode{"选择筛选依据"}
+    Rank["按全省位次"]
+    Score["按高考分数"]
+    Query["读取近三年录取记录"]
+    Match["按院校专业聚合并计算参考分"]
+    Groups["整理冲刺、稳妥、保底"]
+    Detail["查看院校专业和录取趋势"]
+    Favorite["收藏院校或专业"]
+    Compare["选择 2 至 4 项进行对比"]
+    Check["以考试院和学校官网信息复核"]
+    End(["完成资料整理"])
+
+    Start --> Login
+    Login --> Profile
+    Profile --> Mode
+    Mode -->|位次| Rank
+    Mode -->|分数| Score
+    Rank --> Query
+    Score --> Query
+    Query --> Match
+    Match --> Groups
+    Groups --> Detail
+    Detail --> Favorite
+    Favorite --> Compare
+    Compare --> Check
+    Check --> End
