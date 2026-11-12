@@ -1,0 +1,37 @@
+flowchart TB
+    Start(["进入系统"])
+
+    subgraph Prepare["资料准备"]
+        direction LR
+        Login["登录或注册"]
+        Profile["填写省份、科类、分数和位次"]
+        Mode{"选择筛选依据"}
+        Login --> Profile --> Mode
+    end
+
+    subgraph Match["筛选与整理"]
+        direction LR
+        Rank["按全省位次"]
+        Score["按高考分数"]
+        Query["读取近三年录取记录"]
+        Calculate["聚合院校专业并计算参考分"]
+        Groups["整理冲刺、稳妥、保底"]
+        Mode --> Rank --> Query
+        Mode --> Score --> Query
+        Query --> Calculate --> Groups
+    end
+
+    subgraph Check["候选管理"]
+        direction LR
+        Detail["查看院校专业和录取趋势"]
+        Favorite["收藏院校或专业"]
+        Compare["选择 2 至 4 项进行对比"]
+        Verify["以考试院和学校官网信息复核"]
+        Detail --> Favorite --> Compare --> Verify
+    end
+
+    End(["完成资料整理"])
+    Start --> Prepare
+    Prepare --> Match
+    Match --> Check
+    Check --> End

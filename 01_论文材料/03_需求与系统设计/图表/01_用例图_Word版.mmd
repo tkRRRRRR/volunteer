@@ -1,0 +1,38 @@
+flowchart TB
+    subgraph StudentUseCases["学生端"]
+        direction TB
+        S["学生"]
+        S1["注册登录"]
+        S2["维护个人档案"]
+        S3["查询院校与专业"]
+        S4["查看录取趋势"]
+        S5["冲稳保筛选"]
+        S6["收藏与横向对比"]
+        S --> S1
+        S --> S2
+        S --> S3
+        S --> S4
+        S --> S5
+        S --> S6
+    end
+
+    subgraph AdminUseCases["管理端"]
+        direction TB
+        A["管理员"]
+        A1["管理员登录"]
+        A2["院校维护"]
+        A3["专业维护"]
+        A4["录取记录维护"]
+        A5["CSV/Excel 批量导入"]
+        A6["查看数据统计"]
+        A7["查看学生账号"]
+        A --> A1
+        A --> A2
+        A --> A3
+        A --> A4
+        A --> A5
+        A --> A6
+        A --> A7
+    end
+
+    StudentUseCases ~~~ AdminUseCases
