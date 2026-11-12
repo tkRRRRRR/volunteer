@@ -42,6 +42,7 @@ const renderChart = async () => {
   await nextTick()
   if (!chartRef.value) return
   chart ||= echarts.init(chartRef.value)
+  chart.clear()
   if (!hasQueried.value || !results.value.length) {
     chart.setOption(buildEmptyRecommendationOption(emptyMessage.value), true)
     return
@@ -52,6 +53,7 @@ const renderChart = async () => {
     value: results.value.filter((item) => item.matchLevel === level).length
   }))
   chart.setOption({
+    graphic: [],
     tooltip: { trigger: 'item' },
     legend: { bottom: 0, icon: 'circle' },
     series: [{
